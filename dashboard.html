@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - MEI Drive Africa</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root { --neon-green: #00FF88; --dark-blue: #041B3D; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f5f7fb; }
+        .navbar { background: var(--dark-blue); padding: 1rem 2rem; color: white; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 4rem 2rem; }
+        .btn { background: var(--neon-green); color: var(--dark-blue); padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between;">
+            <div style="font-size: 1.5rem; font-weight: bold; color: var(--neon-green);">MEI Drive Africa</div>
+            <button onclick="logout()" class="btn">Logout</button>
+        </div>
+    </nav>
+    <div class="container">
+        <h1>My Dashboard</h1>
+        <p>Welcome to your learning dashboard!</p>
+    </div>
+    <script>
+        const SUPABASE_URL = 'https://jeksrwrzzrczamxijvwl.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impla3Nyd3J6enJjemFteGlqdndsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NzYyMjAsImV4cCI6MjA5NDI1MjIyMH0.1poYpJKNFEVe2NTBkXBTH2bIHGk2yT8aqCU-OlJc4vs';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        async function logout() {
+            await supabase.auth.signOut();
+            window.location.href = '/';
+        }
+        
+        supabase.auth.getSession().then(({ data }) => {
+            if (!data.session) window.location.href = '/';
+        });
+    </script>
+</body>
+</html>
