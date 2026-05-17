@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Details - MEI Drive Africa</title>
+    
+    <!-- Supabase JS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        :root {
+            --neon-green: #00FF88;
+            --dark-blue: #041B3D;
+            --gradient-start: #667eea;
+            --gradient-end: #764ba2;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fb;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background: var(--dark-blue);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--neon-green);
+            cursor: pointer;
+        }
+        
+        .logo span {
+            color: white;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 2rem;
+        }
+        
+        .nav-links a:hover {
+            color: var(--neon-green);
+        }
+        
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 2rem 4rem;
+        }
+        
+        /* Course Header */
+        .course-header {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            padding: 3rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+        }
+        
+        .course-badge {
+            display: inline-block;
+            background: var(--neon-green);
+            color: var(--dark-blue);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .course-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .course-meta {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* Course Content */
+        .course-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+        
+        .course-section {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .course-section h2 {
+            color: var(--dark-blue);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--neon-green);
+            display: inline-block;
+        }
+        
+        .course-section p {
+            color: #555;
+            line-height: 1.6;
+            margin-top: 1rem;
+        }
+        
+        .course-sidebar {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 100px;
+        }
+        
+        .price-box {
+            text-align: center;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            border-radius: 12px;
+            color: white;
+            margin-bottom: 1.5rem;
+        }
+        
+        .price {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        .price.free {
+            color: var(--neon-green);
+        }
+        
+        .enroll-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--neon-green);
+            color: var(--dark-blue);
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .enroll-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .enroll-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .course-info-list {
+            list-style: none;
+            margin-top: 1rem;
+        }
+        
+        .course-info-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--neon-green);
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--dark-blue);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            transform: translateX(400px);
+            transition: transform 0.3s;
+            z-index: 3000;
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        .toast.success {
+            border-left: 4px solid var(--neon-green);
+        }
+        
+        .toast.error {
+            border-left: 4px solid #ff4444;
+        }
+        
+        footer {
+            background: var(--dark-blue);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .course-grid {
+                grid-template-columns: 1fr;
+            }
+            .course-header h1 {
+                font-size: 1.8rem;
+            }
+            .container {
+                padding: 80px 1rem 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="logo" onclick="location.href='/'">MEI Drive <span>Africa</span></div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/#courses">Courses</a>
+            <a href="admin-login.html">Admin</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container" id="courseContainer">
+    <div class="loading">📚 Loading course details...</div>
+</div>
+
+<footer>
+    <p>&copy; 2024 MEI DRIVE AFRICA | NTSA Approved Driver Training</p>
+</footer>
+
+<div id="toast" class="toast"></div>
+
+<script>
+    // Supabase Configuration
+    const SUPABASE_URL = 'https://jeksrwrzzrczamxijvwl.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impla3Nyd3J6enJjemFteGlqdndsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NzYyMjAsImV4cCI6MjA5NDI1MjIyMH0.1poYpJKNFEVe2NTBkXBTH2bIHGk2yT8aqCU-OlJc4vs';
+    
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    
+    let currentUser = null;
+    let courseData = null;
+    
+    // Get course ID from URL
+    function getCourseId() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('id');
+    }
+    
+    // Show toast notification
+    function showToast(message, type) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = `toast ${type} show`;
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+    
+    // Check authentication
+    async function checkAuth() {
+        const { data: { session } } = await supabase.auth.getSession();
+        currentUser = session?.user || null;
+        return currentUser;
+    }
+    
+    // Load course from Supabase
+    async function loadCourse() {
+        const courseId = getCourseId();
+        
+        if (!courseId) {
+            document.getElementById('courseContainer').innerHTML = '<div class="loading">❌ Course not found</div>';
+            return;
+        }
+        
+        try {
+            const { data, error } = await supabase
+                .from('courses')
+                .select('*')
+                .eq('id', courseId)
+                .single();
+            
+            if (error) throw error;
+            
+            courseData = data;
+            displayCourse(data);
+        } catch (error) {
+            console.error('Error loading course:', error);
+            document.getElementById('courseContainer').innerHTML = `
+                <div class="loading">
+                    ❌ Failed to load course<br>
+                    <a href="/" style="color: var(--neon-green); margin-top: 1rem; display: inline-block;">← Back to Home</a>
+                </div>
+            `;
+        }
+    }
+    
+    // Display course
+    function displayCourse(course) {
+        const container = document.getElementById('courseContainer');
+        const isFree = course.type === 'free';
+        const isEnrolled = false; // Check enrollment status from database
+        
+        container.innerHTML = `
+            <div class="course-header">
+                <div class="course-badge">${course.type === 'free' ? '🎓 FREE COURSE' : '💰 PREMIUM COURSE'}</div>
+                <h1>${escapeHtml(course.title)}</h1>
+                <p>${escapeHtml(course.description || 'Comprehensive driver training course')}</p>
+                <div class="course-meta">
+                    <div class="meta-item">📖 Unit ${course.unit_number || '1'}</div>
+                    <div class="meta-item">⏱️ ${course.duration || '2-4 hours'}</div>
+                    <div class="meta-item">📊 ${course.level || 'Beginner'}</div>
+                </div>
+            </div>
+            
+            <div class="course-grid">
+                <div>
+                    <div class="course-section">
+                        <h2>Course Overview</h2>
+                        <p>${escapeHtml(course.content || course.description || 'No content available.')}</p>
+                    </div>
+                    
+                    <div class="course-section">
+                        <h2>What You'll Learn</h2>
+                        <ul style="margin-top: 1rem; padding-left: 1.5rem;">
+                            <li>✓ Kenyan traffic laws and regulations</li>
+                            <li>✓ Safe driving techniques and defensive driving</li>
+                            <li>✓ Vehicle control and emergency maneuvers</li>
+                            <li>✓ NTSA examination preparation</li>
+                            <li>✓ Practical driving skills</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="course-section">
+                        <h2>Requirements</h2>
+                        <ul style="margin-top: 1rem; padding-left: 1.5rem;">
+                            <li>✓ Valid learner's license</li>
+                            <li>${isFree ? '<li>✓ No payment required</li>' : '<li>✓ Payment confirmation for premium access</li>'}
+                            <li>✓ Commitment to complete the course</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="course-sidebar">
+                        <div class="price-box">
+                            <div>Course Price</div>
+                            <div class="price ${isFree ? 'free' : ''}">${isFree ? 'FREE' : `KES ${(course.price || 5000).toLocaleString()}`}</div>
+                            ${!isFree ? '<div style="font-size: 0.8rem; margin-top: 5px;">One-time payment, lifetime access</div>' : ''}
+                        </div>
+                        
+                        <button class="enroll-btn" id="enrollBtn" ${isEnrolled ? 'disabled' : ''}>
+                            ${isEnrolled ? '✓ Already Enrolled' : (isFree ? 'Enroll for Free' : `Pay KES ${(course.price || 5000).toLocaleString()}`)}
+                        </button>
+                        
+                        <ul class="course-info-list">
+                            <li>🎓 ${isFree ? 'Free access' : 'Premium access'}</li>
+                            <li>🏆 Certificate upon completion</li>
+                            <li>📱 Mobile-friendly content</li>
+                            <li>💬 Support available</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Add event listener to enroll button
+        const enrollBtn = document.getElementById('enrollBtn');
+        if (enrollBtn) {
+            enrollBtn.addEventListener('click', () => handleEnrollment(course));
+        }
+    }
+    
+    // Handle enrollment
+    async function handleEnrollment(course) {
+        // Check if user is logged in
+        if (!currentUser) {
+            showToast('Please login to enroll in this course', 'error');
+            setTimeout(() => {
+                window.location.href = 'admin-login.html';
+            }, 1500);
+            return;
+        }
+        
+        const isFree = course.type === 'free';
+        
+        if (isFree) {
+            // Free enrollment
+            try {
+                const { error } = await supabase
+                    .from('enrollments')
+                    .insert({
+                        user_id: currentUser.id,
+                        course_id: course.id,
+                        progress: 0,
+                        status: 'active',
+                        enrolled_at: new Date().toISOString()
+                    });
+                
+                if (error) throw error;
+                
+                showToast('Successfully enrolled!', 'success');
+                document.getElementById('enrollBtn').textContent = '✓ Enrolled';
+                document.getElementById('enrollBtn').disabled = true;
+            } catch (error) {
+                showToast('Enrollment failed. Please try again.', 'error');
+            }
+        } else {
+            // Premium course - redirect to payment
+            showToast('Redirecting to payment...', 'success');
+            setTimeout(() => {
+                window.location.href = `payment.html?course_id=${course.id}&amount=${course.price}`;
+            }, 1000);
+        }
+    }
+    
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    // Initialize
+    async function init() {
+        await checkAuth();
+        await loadCourse();
+    }
+    
+    init();
+</script>
+</body>
+</html>
