@@ -3,224 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Dashboard - MEI Drive Africa</title>
+    <title>Login - MEI Drive Africa</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        :root {
-            --neon-green: #00FF88;
-            --dark-navy: #041B3D;
-            --secondary-dark: #0A234F;
-            --white: #FFFFFF;
-            --soft-gray: #B7C4D6;
-        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', sans-serif;
-            background: var(--secondary-dark);
-            color: var(--white);
-        }
-        .navbar {
-            background: var(--dark-navy);
-            padding: 1rem 2rem;
-            border-bottom: 1px solid rgba(0, 255, 136, 0.15);
-        }
-        .nav-container {
-            max-width: 1200px;
-            margin: auto;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            min-height: 100vh;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
+            padding: 20px;
         }
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--neon-green);
-            cursor: pointer;
-        }
-        .logo span { color: var(--white); }
-        .logout-btn {
-            background: rgba(255, 68, 68, 0.2);
-            border: 1px solid #ff4444;
-            color: #ff4444;
-            padding: 8px 16px;
+        .login-container {
+            background: white;
+            padding: 40px;
             border-radius: 20px;
-            cursor: pointer;
-        }
-        .container {
-            max-width: 1200px;
-            margin: auto;
-            padding: 2rem;
-        }
-        .welcome-card {
-            background: var(--dark-navy);
-            border-radius: 20px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            border: 1px solid rgba(0, 255, 136, 0.15);
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        .stat-card {
-            background: var(--dark-navy);
-            border-radius: 16px;
-            padding: 1.5rem;
-            text-align: center;
-            border: 1px solid rgba(0, 255, 136, 0.15);
-        }
-        .stat-card h2 { font-size: 2rem; color: var(--neon-green); margin-bottom: 0.5rem; }
-        .courses-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-        .course-card {
-            background: var(--dark-navy);
-            border-radius: 16px;
-            padding: 1.5rem;
-            border: 1px solid rgba(0, 255, 136, 0.15);
-            transition: transform 0.3s;
-        }
-        .course-card:hover { transform: translateY(-5px); border-color: var(--neon-green); }
-        .course-icon { font-size: 2rem; margin-bottom: 1rem; }
-        .progress-bar {
-            background: var(--secondary-dark);
-            border-radius: 10px;
-            height: 8px;
-            margin: 1rem 0;
-        }
-        .progress {
-            background: var(--neon-green);
-            border-radius: 10px;
-            height: 100%;
-            width: 0%;
-        }
-        .btn-continue {
-            background: var(--neon-green);
-            color: var(--dark-navy);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
-            cursor: pointer;
             width: 100%;
-            font-weight: bold;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
-        @media (max-width: 768px) {
-            .container { padding: 1rem; }
-            .stats-grid { grid-template-columns: 1fr; }
+        .logo { font-size: 48px; margin-bottom: 20px; }
+        h2 { color: #041B3D; margin-bottom: 10px; }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #00FF88;
+            color: #041B3D;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .error { color: red; margin-top: 10px; }
+        .back { margin-top: 20px; display: block; color: #666; text-decoration: none; }
+        .demo {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            font-size: 12px;
         }
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo" onclick="location.href='/'">MEI DRIVE <span>AFRICA</span></div>
-            <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
-        </div>
-    </nav>
-
-    <div class="container">
-        <div class="welcome-card">
-            <h1>Welcome, <span id="userName">Learner</span>! 👋</h1>
-            <p>Continue your journey to becoming a certified driver</p>
-        </div>
-
-        <div class="stats-grid">
-            <div class="stat-card">
-                <i class="fas fa-book-open" style="font-size: 2rem; color: var(--neon-green);"></i>
-                <h2 id="coursesEnrolled">0</h2>
-                <p>Courses Enrolled</p>
-            </div>
-            <div class="stat-card">
-                <i class="fas fa-chart-line" style="font-size: 2rem; color: var(--neon-green);"></i>
-                <h2 id="avgProgress">0%</h2>
-                <p>Average Progress</p>
-            </div>
-            <div class="stat-card">
-                <i class="fas fa-certificate" style="font-size: 2rem; color: var(--neon-green);"></i>
-                <h2 id="certificates">0</h2>
-                <p>Certificates</p>
-            </div>
-        </div>
-
-        <h2>My Courses</h2>
-        <div id="coursesContainer" class="courses-grid">
-            <p>Loading your courses...</p>
-        </div>
+    <div class="login-container">
+        <div class="logo">🚗</div>
+        <h2>MEI DRIVE AFRICA</h2>
+        <input type="email" id="email" placeholder="Email">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="login()">Login</button>
+        <div id="error" class="error"></div>
+        <a href="/register.html" class="back">Create Account</a>
+        <a href="/" class="back">← Back to Home</a>
+        <div class="demo"><strong>Demo:</strong> learner@meidrive.com / password123</div>
     </div>
-
     <script>
         const SUPABASE_URL = 'https://jeksrwrzzrczamxijvwl.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impla3Nyd3J6enJjemFteGlqdndsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NzYyMjAsImV4cCI6MjA5NDI1MjIyMH0.1poYpJKNFEVe2NTBkXBTH2bIHGk2yT8aqCU-OlJc4vs';
-        
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        let currentUser = null;
         
-        async function checkAuth() {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session) {
-                window.location.href = '/login.html';
-                return;
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const { error } = await supabase.auth.signInWithPassword({ email, password });
+            if (error) {
+                document.getElementById('error').textContent = error.message;
+            } else {
+                window.location.href = '/dashboard.html';
             }
-            currentUser = session.user;
-            
-            // Get user profile
-            const { data: profile } = await supabase
-                .from('profiles')
-                .select('full_name')
-                .eq('id', currentUser.id)
-                .single();
-            
-            document.getElementById('userName').textContent = profile?.full_name || currentUser.email.split('@')[0];
-            await loadUserCourses();
         }
-        
-        async function loadUserCourses() {
-            // Mock data - replace with actual enrollments
-            const courses = [
-                { id: 1, title: 'Learner Hub', icon: '🚗', progress: 45 },
-                { id: 2, title: 'PSV Training', icon: '🚌', progress: 20 },
-                { id: 3, title: 'EV Vehicle Course', icon: '⚡', progress: 0 }
-            ];
-            
-            document.getElementById('coursesEnrolled').textContent = courses.length;
-            document.getElementById('avgProgress').textContent = 
-                Math.round(courses.reduce((sum, c) => sum + c.progress, 0) / courses.length) + '%';
-            
-            const container = document.getElementById('coursesContainer');
-            if (courses.length === 0) {
-                container.innerHTML = '<p style="text-align: center;">You haven\'t enrolled in any courses yet. <a href="/#courses" style="color: var(--neon-green);">Browse Courses</a></p>';
-                return;
-            }
-            
-            container.innerHTML = courses.map(course => `
-                <div class="course-card">
-                    <div class="course-icon">${course.icon}</div>
-                    <h3>${course.title}</h3>
-                    <div class="progress-bar">
-                        <div class="progress" style="width: ${course.progress}%"></div>
-                    </div>
-                    <p>${course.progress}% Complete</p>
-                    <button class="btn-continue" onclick="location.href='/course.html?id=${course.id}'">
-                        ${course.progress > 0 ? 'Continue Learning' : 'Start Course'}
-                    </button>
-                </div>
-            `).join('');
-        }
-        
-        async function logout() {
-            await supabase.auth.signOut();
-            localStorage.removeItem('access_token');
-            window.location.href = '/';
-        }
-        
-        document.getElementById('logoutBtn').addEventListener('click', logout);
-        
-        checkAuth();
     </script>
 </body>
 </html>
