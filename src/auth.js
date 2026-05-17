@@ -1,18 +1,59 @@
-import { createClient } from '@supabase/supabase-js';
+// src/auth.js
+import { supabase } from './supabase.js';
 
-const SUPABASE_URL = 'https://jeksrwrzzrczamxijvwl.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impla3Nyd3J6enJjemFteGlqdndsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NzYyMjAsImV4cCI6MjA5NDI1MjIyMH0.1poYpJKNFEVe2NTBkXBTH2bIHGk2yT8aqCU-OlJc4vs';
+// Auth state listener
+export let currentUser = null;
+export let authListeners = [];
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+export function onAuthChange(callback) {
+    authListeners.push(callback);
+    return () => {
+        const index = authListeners.indexOf(callback);
+        if (index > -1) authListeners.splice(index, 1);
+    };
+}
 
-export async function signUp(email, password, fullName) {
+function notifyAuthChange() {
+    authListeners.forEach(callback => callback(currentUser));
+}
+
+// Password validation
+export function validatePassword(password) {
+    const errors = [];
+    if (password.length < 8) errors.push('At least 8 characters');
+    if (!/[A-Z]/.test(password)) errors.push('One uppercase letter');
+    if (!/[a-z]/.test(password)) errors.push('One lowercase letter');
+    if (!/[0-9]/.test(password)) errors.push('One number');
+    return { valid: errors.length === 0, errors };
+}
+
+// Email validation
+export function validateEmail(email) {
+    const re = /^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/;
+    return re.test(email);
+}
+
+// Register
+export async function register(email, password, fullName) {
+    const emailValid = validateEmail(email);
+    if (!emailValid) return { success: false, error: 'Invalid email format' };
+    
+    const passwordValid = validatePassword(password);
+    if (!passwordValid.valid) {
+        return { success: false, error: `Password must have: ${passwordValid.errors.join(', ')}` };
+    }
+    
+    if (!fullName || fullName.trim().length < 2) {
+        return { success: false, error: 'Full name is required' };
+    }
+    
     const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: { data: { full_name: fullName } }
     });
     
-    if (error) throw error;
+    if (error) return { success: false, error: error.message };
     
     if (data.user) {
         await supabase.from('profiles').insert({
@@ -23,23 +64,37 @@ export async function signUp(email, password, fullName) {
         });
     }
     
-    return data;
+    return { success: true, message: 'Check your email to confirm account' };
 }
 
-export async function signIn(email, password) {
+// Login
+export async function login(email, password) {
+    if (!validateEmail(email)) {
+        return { success: false, error: 'Invalid email format' };
+    }
+    
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) throw error;
-    return data;
+    if (error) return { success: false, error: error.message };
+    
+    await loadCurrentUser();
+    return { success: true, user: currentUser };
 }
 
-export async function signOut() {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+// Logout
+export async function logout() {
+    await supabase.auth.signOut();
+    currentUser = null;
+    notifyAuthChange();
 }
 
-export async function getCurrentUser() {
+// Load current user with profile
+export async function loadCurrentUser() {
     const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return null;
+    if (!session) {
+        currentUser = null;
+        notifyAuthChange();
+        return null;
+    }
     
     const { data: profile } = await supabase
         .from('profiles')
@@ -47,16 +102,41 @@ export async function getCurrentUser() {
         .eq('id', session.user.id)
         .single();
     
-    return {
+    currentUser = {
         id: session.user.id,
         email: session.user.email,
         ...profile
     };
+    
+    notifyAuthChange();
+    return currentUser;
 }
 
-export async function isAdmin() {
-    const user = await getCurrentUser();
-    return user?.role === 'admin';
+// Check if user has access to premium course
+export async function hasCourseAccess(courseId) {
+    if (!currentUser) return false;
+    
+    const { data: course } = await supabase
+        .from('courses')
+        .select('type')
+        .eq('id', courseId)
+        .single();
+    
+    if (course?.type === 'free') return true;
+    
+    const { data: enrollment } = await supabase
+        .from('enrollments')
+        .select('id')
+        .eq('user_id', currentUser.id)
+        .eq('course_id', courseId)
+        .single();
+    
+    return !!enrollment;
 }
 
-export default supabase;
+// Initialize auth listener
+supabase.auth.onAuthStateChange(() => {
+    loadCurrentUser();
+});
+
+loadCurrentUser();
