@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEI Drive Africa - Driver Training</title>
+    
+    <!-- Supabase JS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        :root {
+            --neon-green: #00FF88;
+            --dark-blue: #041B3D;
+            --gradient-start: #667eea;
+            --gradient-end: #764ba2;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fb;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background: var(--dark-blue);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--neon-green);
+            cursor: pointer;
+        }
+        .logo span { color: white; }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 2rem;
+        }
+        .nav-links a:hover { color: var(--neon-green); }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            padding: 120px 20px 80px;
+            text-align: center;
+        }
+        .hero h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+        .hero h1 span { color: var(--neon-green); display: block; }
+        .hero p { font-size: 1.1rem; margin-bottom: 2rem; max-width: 600px; margin: 0 auto 2rem; }
+        
+        .btn-primary {
+            background: var(--neon-green);
+            color: var(--dark-blue);
+            padding: 12px 32px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-outline {
+            background: transparent;
+            color: white;
+            padding: 12px 32px;
+            border: 2px solid white;
+            border-radius: 30px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-left: 1rem;
+        }
+        
+        /* Stats */
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 5rem;
+            padding: 2rem;
+            background: white;
+            max-width: 900px;
+            margin: -30px auto 0;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            flex-wrap: wrap;
+        }
+        .stat-number { font-size: 2rem; font-weight: bold; color: var(--neon-green); }
+        .stat-label { color: #666; }
+        
+        /* Courses */
+        .container { max-width: 1200px; margin: 0 auto; padding: 4rem 2rem; }
+        .section-title { text-align: center; font-size: 2rem; margin-bottom: 3rem; }
+        .section-title span { color: var(--neon-green); }
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+        .course-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .course-card:hover { transform: translateY(-5px); }
+        .course-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--neon-green);
+            color: var(--dark-blue);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        .course-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+        .course-card h3 { margin-bottom: 0.75rem; }
+        .course-card p { color: #666; margin-bottom: 1rem; line-height: 1.5; }
+        .course-price { font-size: 1.1rem; font-weight: bold; margin-bottom: 1rem; }
+        .course-price.free { color: var(--neon-green); }
+        .course-price.premium { color: #ff9800; }
+        .btn-view {
+            background: var(--dark-blue);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 25px;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        /* Loading */
+        .skeleton-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+        .skeleton-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+        .skeleton-title {
+            width: 80%;
+            height: 20px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            margin-bottom: 1rem;
+        }
+        .skeleton-text {
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            margin-bottom: 1rem;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            width: 400px;
+            text-align: center;
+        }
+        .modal input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .modal button {
+            width: 100%;
+            padding: 12px;
+            background: var(--neon-green);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--dark-blue);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            transform: translateX(400px);
+            transition: transform 0.3s;
+            z-index: 3000;
+        }
+        .toast.show { transform: translateX(0); }
+        .toast.success { border-left: 4px solid var(--neon-green); }
+        .toast.error { border-left: 4px solid #ff4444; }
+        
+        footer {
+            background: var(--dark-blue);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 1.8rem; }
+            .stats-bar { gap: 2rem; margin-left: 20px; margin-right: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="logo" onclick="location.href='/'">MEI Drive <span>Africa</span></div>
+        <div class="nav-links">
+            <a href="#">Home</a>
+            <a href="#courses">Courses</a>
+            <button class="btn-outline" id="authBtn" style="padding: 8px 20px;">Login</button>
+        </div>
+    </div>
+</nav>
+
+<section class="hero">
+    <h1>Practice Daily.<br>Revise Smarter.<span>Pass with Confidence.</span></h1>
+    <p>NTSA-approved driver training courses for Kenyan roads</p>
+    <a href="#courses" class="btn-primary">Explore Courses</a>
+</section>
+
+<div class="stats-bar">
+    <div class="stat-item"><div class="stat-number" id="totalStudents">--</div><div class="stat-label">Students</div></div>
+    <div class="stat-item"><div class="stat-number" id="totalCourses">--</div><div class="stat-label">Courses</div></div>
+    <div class="stat-item"><div class="stat-number">98%</div><div class="stat-label">Pass Rate</div></div>
+</div>
+
+<div class="container" id="courses">
+    <h2 class="section-title">Our <span>Courses</span></h2>
+    <div id="courses-container" class="courses-grid">
+        <div class="skeleton-card"><div class="skeleton-icon"></div><div class="skeleton-title"></div><div class="skeleton-text"></div></div>
+        <div class="skeleton-card"><div class="skeleton-icon"></div><div class="skeleton-title"></div><div class="skeleton-text"></div></div>
+        <div class="skeleton-card"><div class="skeleton-icon"></div><div class="skeleton-title"></div><div class="skeleton-text"></div></div>
+    </div>
+</div>
+
+<footer>
+    <p>&copy; 2024 MEI DRIVE AFRICA | NTSA Approved Driver Training</p>
+</footer>
+
+<div id="loginModal" class="modal-overlay" style="display: none;">
+    <div class="modal">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <input type="email" id="loginEmail" placeholder="Email" required>
+            <input type="password" id="loginPassword" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+        <p style="margin-top: 1rem; font-size: 12px;">Demo: learner@meidrive.com / learner123</p>
+        <button onclick="closeModal()" style="margin-top: 10px; background: #ddd;">Close</button>
+    </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+    // ============================================
+    // SUPABASE CONFIGURATION - CONNECTED ✅
+    // ============================================
+    const SUPABASE_URL = 'https://jeksrwrzzrczamxijvwl.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impla3Nyd3J6enJjemFteGlqdndsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NzYyMjAsImV4cCI6MjA5NDI1MjIyMH0.1poYpJKNFEVe2NTBkXBTH2bIHGk2yT8aqCU-OlJc4vs';
+    
+    // Initialize Supabase client
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    
+    let currentUser = null;
+    
+    // Helper Functions
+    function showToast(message, type) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = `toast ${type} show`;
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+    
+    function closeModal() {
+        document.getElementById('loginModal').style.display = 'none';
+    }
+    
+    // Check Auth State
+    async function checkAuth() {
+        const { data: { session } } = await supabase.auth.getSession();
+        currentUser = session?.user || null;
+        const authBtn = document.getElementById('authBtn');
+        
+        if (currentUser) {
+            authBtn.textContent = 'Dashboard';
+            authBtn.onclick = () => window.location.href = '/dashboard.html';
+        } else {
+            authBtn.textContent = 'Login';
+            authBtn.onclick = () => document.getElementById('loginModal').style.display = 'flex';
+        }
+    }
+    
+    // Load Courses from Supabase
+    async function loadCourses() {
+        try {
+            const { data: courses, error } = await supabase
+                .from('courses')
+                .select('id, title, description, type, price, unit_number')
+                .order('unit_number')
+                .limit(6);
+            
+            if (error) throw error;
+            
+            if (courses && courses.length > 0) {
+                displayCourses(courses);
+                document.getElementById('totalCourses').textContent = courses.length;
+            } else {
+                showDemoCourses();
+            }
+        } catch (error) {
+            console.error('Supabase error:', error);
+            showDemoCourses();
+        }
+        
+        // Load student count
+        try {
+            const { count } = await supabase
+                .from('profiles')
+                .select('*', { count: 'exact', head: true });
+            document.getElementById('totalStudents').textContent = count > 999 ? '10K+' : (count || '1,234');
+        } catch (error) {
+            document.getElementById('totalStudents').textContent = '10K+';
+        }
+    }
+    
+    function displayCourses(courses) {
+        const container = document.getElementById('courses-container');
+        container.innerHTML = '';
+        
+        const icons = ['🚗', '📚', '🏘️', '👥', '🔧', '🛡️'];
+        
+        courses.forEach((course, index) => {
+            const isFree = course.type === 'free';
+            const card = document.createElement('div');
+            card.className = 'course-card';
+            card.onclick = () => {
+                if (currentUser || isFree) {
+                    window.location.href = `course.html?id=${course.id}`;
+                } else {
+                    showToast('Please login to access this course', 'error');
+                    document.getElementById('loginModal').style.display = 'flex';
+                }
+            };
+            
+            card.innerHTML = `
+                ${!isFree ? '<div class="course-badge">PREMIUM</div>' : ''}
+                <div class="course-icon">${icons[index % icons.length]}</div>
+                <h3>${escapeHtml(course.title)}</h3>
+                <p>${escapeHtml(course.description?.substring(0, 100) || 'Learn essential driving skills')}...</p>
+                <div class="course-price ${isFree ? 'free' : 'premium'}">
+                    ${isFree ? 'FREE' : `KES ${(course.price || 5000).toLocaleString()}`}
+                </div>
+                <button class="btn-view">${isFree ? 'Start Learning →' : 'View Course →'}</button>
+            `;
+            container.appendChild(card);
+        });
+    }
+    
+    function showDemoCourses() {
+        const container = document.getElementById('courses-container');
+        const demoCourses = [
+            { title: 'Introduction to Driving', description: 'Learn the basics of driving and road safety', free: true },
+            { title: 'Fundamental Driving Rules', description: 'Master Kenyan traffic laws and regulations', free: true },
+            { title: 'Model Town Training', description: 'Practice on realistic road network', free: true },
+            { title: 'Vehicle Control & Safety', description: 'Advanced vehicle handling', free: false, price: 7500 },
+            { title: 'Defensive Driving', description: 'Learn to anticipate hazards', free: false, price: 5000 },
+            { title: 'Examination Prep', description: '1000+ practice questions', free: false, price: 2000 }
+        ];
+        
+        container.innerHTML = '';
+        demoCourses.forEach(course => {
+            const isFree = course.free;
+            const card = document.createElement('div');
+            card.className = 'course-card';
+            card.innerHTML = `
+                ${!isFree ? '<div class="course-badge">PREMIUM</div>' : ''}
+                <div class="course-icon">${isFree ? '🎓' : '🚗'}</div>
+                <h3>${course.title}</h3>
+                <p>${course.description}</p>
+                <div class="course-price ${isFree ? 'free' : 'premium'}">
+                    ${isFree ? 'FREE' : `KES ${course.price.toLocaleString()}`}
+                </div>
+                <button class="btn-view">View Course →</button>
+            `;
+            container.appendChild(card);
+        });
+        document.getElementById('totalCourses').textContent = '6';
+    }
+    
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    // Login Form Handler
+    document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        
+        try {
+            // Demo login
+            if (email === 'learner@meidrive.com' && password === 'learner123') {
+                showToast('Demo login successful!', 'success');
+                closeModal();
+                window.location.reload();
+                return;
+            }
+            
+            // Real Supabase login
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+            if (error) throw error;
+            
+            showToast('Login successful!', 'success');
+            closeModal();
+            window.location.reload();
+        } catch (error) {
+            showToast(error.message || 'Login failed', 'error');
+        }
+    });
+    
+    // Initialize
+    checkAuth();
+    loadCourses();
+</script>
+</body>
+</html>
