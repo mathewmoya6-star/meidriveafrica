@@ -7,831 +7,761 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ============================================
-// LEARNER HUB - COMPLETE COURSE MATERIAL
-// 21 UNITS OF DRIVER TRAINING
+// ALL 8 COURSES
 // ============================================
-
-const learnerHubCourse = {
-    id: 1,
-    title: '🚗 Learner Hub',
-    description: 'Complete NTSA-approved driver training for new drivers. Covers all 21 units from introduction to advanced driving techniques.',
-    type: 'premium',
-    price: 5000,
-    duration: '40 hours',
-    level: 'Beginner to Advanced',
-    category: 'learner',
-    image_url: '/images/learner-hub.jpg'
-};
-
-// ============================================
-// 21 UNITS CONTENT
-// ============================================
-
-const units = [
+const courses = [
     {
+        id: 1,
+        title: '🚗 Learner Hub',
+        description: 'Complete NTSA-approved driver training for new drivers. Covers all 21 units from introduction to advanced driving techniques.',
+        content: 'The Learner Hub is a comprehensive driver training program covering all aspects of driving including traffic rules, vehicle control, emergency procedures, and exam preparation.',
+        type: 'premium',
+        price: 5000,
+        duration: '40 hours',
+        level: 'Beginner to Advanced',
+        category: 'learner',
+        icon: '🚗'
+    },
+    {
+        id: 2,
+        title: '🚌 PSV (Public Service Vehicle)',
+        description: 'Specialized training for matatu, bus, and taxi drivers focusing on passenger safety, commercial regulations, and customer service.',
+        content: 'PSV training covers passenger safety, route management, fare handling, customer service, and NTSA PSV regulations.',
+        type: 'premium',
+        price: 7500,
+        duration: '25 hours',
+        level: 'Intermediate',
+        category: 'psv',
+        icon: '🚌'
+    },
+    {
+        id: 3,
+        title: '🚸 School Bus/Van Driver',
+        description: 'Specialized safety training for school transport drivers focusing on child safety, route management, and emergency protocols.',
+        content: 'School transport safety training covering child passenger safety, loading/unloading procedures, emergency evacuation, and student management.',
+        type: 'premium',
+        price: 6500,
+        duration: '20 hours',
+        level: 'Intermediate',
+        category: 'school-bus',
+        icon: '🚸'
+    },
+    {
+        id: 4,
+        title: '⚡ EV Vehicle Course',
+        description: 'Master electric vehicle driving, charging management, and EV-specific safety protocols for modern sustainable transport.',
+        content: 'EV course covers electric vehicle controls, battery management, charging stations, regenerative braking, and EV safety protocols.',
+        type: 'premium',
+        price: 8000,
+        duration: '15 hours',
+        level: 'Beginner to Intermediate',
+        category: 'ev',
+        icon: '⚡'
+    },
+    {
+        id: 5,
+        title: '🛵 Boda Boda (Motorcycle)',
+        description: 'Professional motorcycle taxi training covering safety, passenger transport, and defensive riding techniques.',
+        content: 'Boda boda training covers motorcycle controls, protective gear, passenger safety, defensive riding, and route optimization.',
+        type: 'premium',
+        price: 5500,
+        duration: '20 hours',
+        level: 'Beginner',
+        category: 'boda-boda',
+        icon: '🛵'
+    },
+    {
+        id: 6,
+        title: '🚛 Professional Driver/Refresher',
+        description: 'Advanced training for experienced drivers. Refresher course covering defensive driving and advanced techniques.',
+        content: 'Professional driver refresher course covering advanced defensive driving, skid control, adverse conditions, and fleet management.',
+        type: 'premium',
+        price: 7000,
+        duration: '15 hours',
+        level: 'Advanced',
+        category: 'professional',
+        icon: '🚛'
+    },
+    {
+        id: 7,
+        title: '📚 e-Safety Library',
+        description: 'Free comprehensive road safety resources, guides, and educational materials for all road users.',
+        content: 'Free safety resources including pedestrian guides, cyclist safety, child education, first aid, and traffic act reference.',
+        type: 'free',
+        price: 0,
+        duration: 'Self-paced',
+        level: 'All levels',
+        category: 'safety',
+        icon: '📚'
+    },
+    {
+        id: 8,
+        title: '📝 Quiz Bank (1000+ Questions)',
+        description: 'Comprehensive exam preparation with 1000+ NTSA-style practice questions covering all driving categories.',
+        content: 'Quiz bank with over 1000 NTSA-style questions covering road signs, traffic rules, vehicle controls, and emergency procedures.',
+        type: 'premium',
+        price: 3000,
+        duration: 'Self-paced',
+        level: 'All levels',
+        category: 'quiz',
+        icon: '📝'
+    }
+];
+
+// ============================================
+// LEARNER HUB UNITS (21 UNITS)
+// ============================================
+const learnerHubUnits = [
+    {
+        course_id: 1,
         unit_number: 1,
         title: 'Introduction to Driving',
-        content: `# UNIT 1: INTRODUCTION TO DRIVING
+        content: `UNIT 1: INTRODUCTION TO DRIVING
 
-## Overview
 Motor vehicles are an important part of our day-to-day living and provide a means for people and goods to be transported from one location to another.
 
-## Key Learning Objectives
-- Understand the importance of driver training
-- Learn about vehicle basics
-- Understand driver responsibility on the road
+The goal of driver training is ensure that you, as the driver, are equipped with the right knowledge of how to handle your vehicle and how to act appropriately when using the road.
 
-## Course Content
-
-### The Goal of Driver Training
-The goal of driver training is to ensure that you, as the driver, are equipped with the right knowledge of how to handle your vehicle and how to act appropriately when using the road.
-
-### Why Driver Training Matters
-Most traffic accidents are caused by human error, however this can be easily prevented when the driver is adequately prepared for the traffic situation.
-
-### Benefits of Proper Training
-This training also ensures that you are prepared with the necessary skills to provide safe and efficient transport services for goods and for passengers.
-
-## Key Takeaways
-- Motor vehicles transport people and goods daily
-- Driver training provides essential knowledge and skills
-- Most accidents are caused by human error
-- Proper preparation prevents accidents
-- Trained drivers provide safer transport services
-
-## Quiz Questions
-1. What is the main goal of driver training?
-2. What causes most traffic accidents?
-3. How can accidents be prevented?`,
+Most traffic accidents are caused by human error, however this can be easily prevented when the driver is adequately prepared for the traffic situation.`,
         duration: '2 hours',
-        key_points: [
-            'Motor vehicles transport people and goods',
-            'Driver training provides knowledge and skills',
-            'Most accidents caused by human error',
-            'Proper preparation prevents accidents'
-        ]
+        key_points: ['Motor vehicles transport people and goods', 'Driver training provides knowledge and skills', 'Most accidents caused by human error']
     },
     {
+        course_id: 1,
         unit_number: 2,
         title: 'Fundamental Driving Rules',
-        content: `# UNIT 2: FUNDAMENTAL DRIVING RULES
+        content: `UNIT 2: FUNDAMENTAL DRIVING RULES
 
-## Overview
-The road is governed by rules and regulations that ensure order is maintained on the roads at all times. These rules and regulations are derived from international, regional and Kenyan law.
+The road is governed by rules and regulations that ensure order is maintained on the roads at all times.
 
-## Key Learning Objectives
-- Understand the Traffic Act and Highway Code
-- Learn proper horn usage
-- Understand right-of-way rules
-- Know pedestrian rights
+The Traffic Act sets out the laws that govern the use of roads. The Highway Code is a set of information, advice, guides and mandatory rules for all road users.
 
-## The Traffic Act
-The Traffic Act sets out the laws that govern the use of roads and the expected conduct of road users. It also includes some of the penalties and fines for road users who do not abide by these laws.
-
-## The Highway Code
-The Highway Code is a set of information, advice, guides and mandatory rules for all road users in Kenya. It provides guidelines for animal, pedestrians, cyclists and motorcyclists.
-
-### Purpose of the Highway Code
-The purpose of the Highway Code is to promote safety, responsible behaviour and courtesy at all times.
-
-## Important Regulations
-
-### Use of the Horn
-- You may only use your car horn while your vehicle is moving and you need to warn other road users of your presence
-- Do not use the horn when you are stationary on the road
-- Do not use the horn aggressively even when the other road users are at fault
-- Do not use your horn at places where the 'No Hooting' sign has been placed
-- Do not use your horn at designated areas where hooting is always prohibited (hospitals, schools)
-
-### Right-of-Way Rules
-Give right-of-way to:
-- Police cars
-- Emergency vehicles (fire engines, ambulances) sounding sirens or with flashing lights
-- The presidential motorcade
-- When asked to do so by a police officer or traffic marshall
-
-### Pedestrian Rights
-- You should not ride or drive in areas of the road designated for pedestrians and cyclists
-- Always give way to pedestrians at crossings
-
-## Traffic Signs and Signals
-Traffic signs and signals are used to communicate on the road.
-
-### Types of Traffic Signals
-- Hand signals
-- Light signals
-
-### Categories of Traffic Signs
-- **Triangle**: Warning signs
-- **Circle**: Giving an order (regulatory)
-- **Rectangle**: Informing (information signs)
-
-## Key Takeaways
-- The Traffic Act and Highway Code govern road use
-- Horn only for warning while moving
-- Give way to emergency vehicles
-- Pedestrians have right of way
-- Three types of traffic signs: Warning, Order, Information
-
-## Quiz Questions
-1. What documents contain Kenyan road rules?
-2. When can you use your car horn?
-3. Which vehicles must you give right-of-way to?
-4. What are the three categories of traffic signs?`,
+KEY RULES:
+• Use horn only while moving to warn others
+• Give right-of-way to police, fire engines, ambulances
+• Respect pedestrian right of way
+• Follow all traffic signs and signals`,
         duration: '3 hours',
-        key_points: [
-            'Traffic Act and Highway Code govern road use',
-            'Horn only for warning while moving',
-            'Give way to emergency vehicles',
-            'Pedestrians have right of way',
-            'Triangle = Warning, Circle = Order, Rectangle = Information'
-        ]
+        key_points: ['Traffic Act and Highway Code govern road use', 'Horn only for warning while moving', 'Give way to emergency vehicles']
     },
     {
+        course_id: 1,
         unit_number: 3,
         title: 'Model Town',
-        content: `# UNIT 3: MODEL TOWN
+        content: `UNIT 3: MODEL TOWN
 
-## Overview
-The model town board is an example of a road network on a board. It is a simplified representation used to explain the types of roads found in major towns of Kenya and East Africa.
+The model town board features:
+- One way traffic road (Dual Carriage Way) with white lines
+- Two way traffic road (Single Carriageway) with yellow center line
+- Roundabout with 4 lanes and clockwise movement
+- Parking zones (Angle and Flush parking)
+- Yellow kerb indicating no parking/stopping
+- Pedestrian crossing
+- Stop and Give way signs
 
-## Model Town Features
-
-1. One way traffic road (Dual Carriage Way)
-2. Two way traffic road (Single Carriageway)
-3. Roundabout
-4. Parking zones (Angle and Flush parking)
-5. Yellow kerb
-6. Pedestrian crossing
-7. Stop sign
-8. Give way sign
-9. Exit from main road
-10. Exit from controlled parking zone
-11. Road markings (arrows, reflectors, delta marks)
-
-## One Way Traffic Road (Dual Carriage Way)
-
-### Characteristics
-- All traffic vehicles move in one direction
-- White continuous or broken lines dividing lanes into equal parts
-- Central reserve separates one-way traffic
-
-### Rules
-- **White continuous line**: No changing lanes or overtaking
-- **White dotted/broken line**: Overtaking or changing lanes allowed if road is clear/safe
-- **Yellow kerb**: No overlapping, no parking, no waiting, no stopping
-
-## Two Way Traffic Road (Single Carriageway)
-
-### Characteristics
-- Vehicles move in opposite directions
-- Single continuous or broken yellow line at centre dividing road into two equal parts
-
-### Rules
-- **Yellow continuous line**: Stick to your side, no overtaking
-- **Yellow broken line**: Overtaking allowed if road is clear
-- Keep left unless overtaking
-
-## Roundabout
-
-### Definition
-A meeting point of traffic where more than two roads meet at a point.
-
-### Function
-To facilitate movement of vehicles in different directions without obstruction or collision.
-
-### Roundabout Rules
-- No stopping
-- No changing lanes
-- No parking
-- No overtaking
-- No waiting
-- Keep left and move in clockwise direction
-
-### Roundabout Parts
-1. **Traffic Island**: Green part at centre used to control movement
-2. **Lane 4 (Innermost)**: Only lane that allows full circle (360°) from a four-lane road
-3. **Lanes 3, 2, 1**: Cannot make full circle
-
-### Common Mistakes
-- Approaching roundabout in wrong lane
-- Leaving/exiting roundabout in wrong lane
-- Changing lanes on roundabout
-- Incorrectly observing traffic lights
-
-## Parking Zones
-
-### Angle Parking (Controlled)
-- Strictly for small cars only (Saloon)
-- Park from farthest end
-- Park by forward gear (direct)
-- Exit by reverse
-- Designated entrance and exit from both sides
-
-### Flush Parking (Uncontrolled)
-- All types of vehicles except tractors and trailers
-- Entry but must leave space for exit
-- Park from farthest end
-- Park by reverse
-- Exit by forward driving
-
-## Stop Sign
-- Red octagon with white letters
-- Positioned at junction when joining two-way traffic road
-- Required to stop and look right, left, right again
-- Only proceed if road is clear
-
-## Give Way/Yield Sign
-- Red triangular shape with apex facing downward
-- White border
-- Slow down or stop if necessary
-- Only proceed if safe
-
-## Direction Rules
-
-### Four-Lane Road Approaching Roundabout
-
-**Lane 1 Options:**
-- Stay on lane 1, go straight (0°)
-- Turn left (90°)
-
-**Lane 2 Options:**
-- Go straight only (0°)
-
-**Lane 3 Options:**
-- Stay on lane 3, go straight
-- Turn right (90°)
-
-**Lane 4 Options:**
-- Turn right (90°)
-- Come back (180°)
-- Turn left (270°)
-- Go straight 360° after going round clockwise
-
-## Key Takeaways
-- One-way roads have white lines, yellow kerb means no stopping
-- Two-way roads have yellow lines, keep left
-- Roundabout rules: No stopping, no overtaking, keep left
-- Angle parking: forward in, reverse out
-- Flush parking: reverse in, forward out
-
-## Quiz Questions
-1. What does a white continuous line on a one-way road mean?
-2. What does a yellow continuous line on a two-way road mean?
-3. List 5 roundabout rules.
-4. What is the difference between angle and flush parking?
-5. What does a Stop sign mean?`,
+ROUNDABOUT RULES:
+• No stopping, no changing lanes, no parking, no overtaking
+• Keep left and move clockwise
+• Count lanes from outermost to innermost`,
         duration: '4 hours',
-        key_points: [
-            'One-way roads: white lines, yellow kerb = no stopping',
-            'Two-way roads: yellow lines, keep left unless overtaking',
-            'Roundabout: keep left, no overtaking, lanes 1-4',
-            'Angle parking: forward in, reverse out (small cars)',
-            'Flush parking: reverse in, forward out (all vehicles)',
-            'Stop sign: come to complete stop, look right-left-right'
-        ]
+        key_points: ['One-way roads: white lines, yellow kerb = no stopping', 'Roundabout: keep left, no overtaking', 'Angle parking: forward in, reverse out']
     },
     {
+        course_id: 1,
         unit_number: 4,
         title: 'Human Factors in Traffic',
-        content: `# UNIT 4: HUMAN FACTORS IN TRAFFIC
+        content: `UNIT 4: HUMAN FACTORS IN TRAFFIC
 
-## Observation
+OBSERVATION RULES:
+• Keep your eyes moving
+• Get a wide view of what's ahead and behind
+• Use all mirrors
+• Ensure other road users can see you
 
-### Rules for Observation
-- Keep your eyes moving. Do not just focus on one angle
-- Get a wide view of what is ahead and behind you
-- When driving, make use of all mirrors (rear view and wide view)
-- Pay attention to the vehicle instruments
-- Ensure other road users can see you
-- Watch other road users, especially cyclists, motorcyclists, and pedestrians
-- When passing parked cars, watch out for opening doors and exiting passengers
-- Give special attention to vulnerable road users (children, elderly, persons with disabilities)
-- Give special attention to non-motorized transport (horses, donkey carts, handcarts, bicycles, wheelchairs)
+FATIGUE PREVENTION:
+• Get quality sleep before driving
+• Take regular breaks on long distances
+• If tired, stop at a safe place
 
-## Health and Safety
+ALCOHOL EFFECTS:
+• Slows brain functions
+• Reduces judgment of speed/distance
+• Gives false confidence
+• Affects balance
 
-### Eyesight and Vision
-- Check your eyes regularly
-- If you need spectacles, wear them before starting any journey
-- Do not wear sunglasses or tinted helmet visors at night or in poor visibility
-
-### Fatigue
-Fatigue is extreme tiredness as a result of mental or physical exertion.
-
-#### Causes of Fatigue
-- Insufficient sleep or rest
-- Extended length of time performing the same task
-- Sleep disorders and other illnesses
-- Driving at time of day when you usually rest (night driving, early morning)
-
-#### Preventing Driver Fatigue
-- Get quality sleep before driving
-- Take regular breaks on long distances
-- Eat balanced meals at regular intervals
-- Keep fit and healthy
-- Avoid driving at night when you're likely to feel sleepy
-- If you feel tired, stop at a safe place and rest
-
-## Distractions
-
-### Using Handheld Devices
-- Using a cell phone, whether talking or texting, reduces ability to be keen on the road
-- Accident rate is significantly reduced when motorists refrain from using handheld devices
-- Switch off phones or put them out of reach for the duration of the journey
-
-### Radio
-- Fine to listen while driving but refrain from adjusting volume or changing CDs while driving
-
-### Grooming, Smoking, Eating
-- These are distracting - do them before or at the end of the journey
-
-### Video Devices
-- Should not ever be placed in driver's area of vision
-- Passengers in rear can have them but volume must be controlled
-
-### GPS Units
-- Set device before starting the journey
-
-### Carbon Monoxide Poisoning
-- Odourless gas emitted in exhaust fumes - can be lethal
-- Always check exhaust system for leakages
-- Never run engine in enclosed space
-
-## Alcohol, Drugs and Medicine
-
-### Effects of Alcohol
-- Slows down brain functions - affects ability to respond, make decisions, react quickly
-- Reduces ability to judge speed and distance
-- Gives false confidence - may take greater risks
-- Makes it harder to concentrate
-- Affects sense of balance
-
-### Important Rules
-- Do not drink and drive
-- Police Breathalyser (ALCOBLOW) measures Blood Alcohol Concentration (BAC)
-- It is an offence to refuse an alcohol test
-- Designate a non-drinking driver, take a taxi, or use public transport
-- Do not take medicine which causes drowsiness if you intend to drive
-- Do not drive if you are unwell
-
-## Safety Belts
-- All passengers must wear safety belts at all times regardless of distance
-- Fasten safety belt correctly
-- Use appropriate child restraints for children (booster seat for under 12)
-
-## Litter
-- DO NOT discard litter on roads
-- Litter can be a hazard
-- Always dispose of litter in dustbin
-
-## Road Rage
-- Be courteous on the road
-- If provoked, do not retaliate
-
-## Prevention of Theft
-- Switch off ignition and remove keys
-- Lock all windows and car boot
-
-## Load Limitations
-- Do not carry more than legally allowed number of passengers or weight of goods
-- Category B vehicles: Not more than 7 passengers
-- When loading, items should be as low as possible and close to centre of vehicle
-- Check tyre pressure for weight being carried
-
-## Safety Equipment
-
-| Equipment | Function |
-|-----------|----------|
-| Reflector Triangle | Place 60m ahead and behind disabled vehicle |
-| First Aid Kit | Gauze, bandages, scissors, gloves, antiseptic |
-| Tool Box | Jack and spanner for minimal repairs |
-| Fire Extinguisher | Deal with fire emergencies |
-| Fire Axe | Rescue passengers in fire |
-| Tow Ropes | Tow vehicles in breakdown |
-| Spare Tyre | Keep inflated |
-| Jumpstart Cables | Reignite engine |
-| Survival Gear | Blankets, torch, food, water |
-
-## Key Takeaways
-- Keep eyes moving, use all mirrors
-- Fatigue prevention: quality sleep before driving
-- No cell phones while driving
-- Alcohol slows brain function - don't drink and drive
-- Safety belts mandatory for all passengers
-- Carry complete safety equipment
-
-## Quiz Questions
-1. What are the rules for observation while driving?
-2. What causes driver fatigue and how can it be prevented?
-3. List 5 distractions that drivers should avoid.
-4. What are the effects of alcohol on driving?
-5. What safety equipment should every vehicle carry?`,
+SAFETY EQUIPMENT:
+• Reflector Triangle - place 50m ahead and behind
+• First Aid Kit
+• Fire Extinguisher
+• Spare tyre
+• Tool box`,
         duration: '3 hours',
-        key_points: [
-            'Keep eyes moving, use all mirrors',
-            'Fatigue: get quality sleep before driving',
-            'No cell phones while driving',
-            'Alcohol slows brain function - don\'t drink and drive',
-            'Safety belts mandatory for all passengers',
-            'Carry reflector triangle, first aid kit, fire extinguisher'
-        ]
+        key_points: ['Keep eyes moving, use all mirrors', 'No cell phones while driving', 'Alcohol slows brain function', 'Carry safety equipment']
     },
     {
+        course_id: 1,
         unit_number: 5,
         title: 'Vehicle Constructions and Controls',
-        content: `# UNIT 5: VEHICLE CONSTRUCTIONS AND CONTROLS
+        content: `UNIT 5: VEHICLE CONSTRUCTIONS AND CONTROLS
 
-## Vehicle Controls and Their Functions
+CONTROLS AND FUNCTIONS:
+• Steering Wheel - Change direction
+• Direction Indicator - Signal turns
+• Gear Lever - Change gears
+• Hand Brake - Keep stationary on inclines
+• Brake Pedal - Slow or stop
+• Accelerator - Increase speed
+• Clutch Pedal - Change gears (manual)
+• Rear-view Mirror - See behind
+• Side Mirror - See sides
+• Speedometer - Show speed
+• Temperature Gauge - Check engine temperature
 
-| Component | Function |
-|-----------|----------|
-| Steering Wheel | Change direction or maintain course. Both hands on wheel at all times |
-| Direction Indicator | Signal turning left or right |
-| Gear Lever | Change gears in manual vehicle |
-| Hand Brake | Keep vehicle stationary, especially on inclines |
-| Brake Pedal | Slow speed or stop |
-| Accelerator | Increase speed |
-| Clutch Pedal | Change gears in manual vehicle |
-| Rear-view Mirror | See other vehicles and hazards behind |
-| Side Mirror | See vehicles behind and to the side |
-| Windscreen Wipers | Clear view in rain |
-| Speedometer | Show driving speed |
-| Temperature Gauge | Check engine temperature |
-
-## Components of a Light Vehicle
-
-- **Engine**: Power source of the vehicle
-- **Ignition**: Starts the engine
-- **Exhaust Pipe**: Removes exhaust gases
-- **Gear Box**: Transmits power to wheels
-- **Radiator**: Cools the engine
-- **Chassis**: Framework of the vehicle
-- **Windscreen**: Front window
-- **Bumper Bar**: Absorbs impact
-
-## Vehicle Accessories
-- Air-conditioning
-- Antilock Braking System (ABS)
-- Secondary Restrain System (SRS) - Airbags
-
-## Vehicle Systems
-
-### Braking System
-- Disc brakes and drum brakes
-- Located on all four wheels
-- Front brakes play more crucial role
-
-### Steering System
-- Controls direction of vehicle
-- Should have full 360° range of motion
-
-### Transmission System
-- Transfers power from engine to wheels
-
-### Suspension System
-- Absorbs road shocks for smooth ride
-
-### Rim and Tyres
-- Contact with road surface
-- Regular pressure checks needed
-
-## Key Takeaways
-- Know all vehicle controls and their functions
-- Understand main vehicle components
-- Familiarize with vehicle systems
-
-## Quiz Questions
-1. What is the function of the steering wheel?
-2. Which pedal is used to increase speed?
-3. What does the speedometer show?
-4. What are the main vehicle systems?
-5. Why is tyre pressure important?`,
+VEHICLE SYSTEMS:
+• Engine, Braking system, Steering system
+• Transmission system, Suspension system
+• Electrical system`,
         duration: '5 hours',
-        key_points: [
-            'Steering wheel: both hands at 10-and-2 or 9-and-3',
-            'Gear lever: 5 forward gears, 1 reverse',
-            'Brake pedal slows/stops, accelerator increases speed',
-            'Clutch pedal only for manual transmission',
-            'Mirrors: rear-view and side mirrors for visibility'
-        ]
+        key_points: ['Steering wheel controls direction', 'Brake slows, accelerator speeds up', 'Mirrors for visibility', 'Check dashboard gauges']
     },
     {
+        course_id: 1,
         unit_number: 6,
         title: 'Self-Inspection of Vehicle',
-        content: `# UNIT 6: SELF-INSPECTION OF VEHICLE
+        content: `UNIT 6: SELF-INSPECTION OF VEHICLE
 
-## Two Parts of Self-Inspection
-1. Exterior Inspection
-2. Interior Inspection
+EXTERIOR INSPECTION:
+• Tyres - pressure, tread depth, condition
+• Reflectors and lights - headlights, signals, hazards
+• Mirrors - present, adjusted, unobstructed
+• Windshield Wipers - work at all settings
+• Windows - open and shut properly
+• Safety Belts - functional clasps
+• Emergency equipment - triangle, extinguisher, first aid
 
-## Exterior Inspection
-
-### 1. Tyres Safety Check
-- Visual inspection before and after every journey
-- Remove small stones wedged in tread
-- Ensure tyre treads are in good condition
-- Replace aging tyres
-- Ensure tyres are securely fastened
-- Check tyre pressure
-- Recognize danger of underinflated and overinflated tyres
-- Ensure spare tyre is in good condition
-
-### 2. Reflectors and Lights
-- Ensure headlights, turn signals, hazard lights are operational
-- Check reverse lights (ask for assistance)
-
-### 3. Mirrors
-- All mirrors present, properly adjusted, unobstructed
-
-### 4. Windshield Wipers
-- Work at all settings
-- Have wiper fluid
-
-### 5. Windows
-- Open and shut without difficulty
-- Roll up handle functional
-
-### 6. The Body
-- Inspect for damage (dents, scratches)
-
-### 7. Cleanliness
-- Windscreen, windows, mirrors clean
-- Vehicle interior clean and clutter-free
-
-### 8. Safety Belts and Car Seats
-- Functional clasps
-- Clean safety belts
-- Child safety seats/booster seats in good condition
-
-### 9. Emergency Equipment
-- Reflector triangle
-- Fire extinguisher
-- First aid kit
-- Tools
-- Spare tyre
-- Survival gear
-
-### 10. Paperwork
-- Driver's licence
-- Vehicle registration
-- Insurance
-
-## Interior Inspection
-
-### 1. Brakes
-- Ensure properly adjusted
-
-### 2. Steering
-- Full range of motion (360 degrees)
-- Effectively turns front wheels
-
-### 3. Indicators
-- All operational
-
-### 4. Vehicle Transmission
-- Capable of shifting into any gear
-
-### 5. Oil Level
-- Check and top up if needed
-
-### 6. Coolant Check
-- Ensure proper level
-
-### 7. Battery
-- Check connections
-
-### 8. Leaks
-- Check for any fluid leaks
-
-## Key Takeaways
-- Complete exterior and interior inspection before every journey
-- Check tyres, lights, mirrors, wipers
-- Verify all safety equipment present
-- Ensure paperwork is valid
-- Check mechanical systems (brakes, steering, transmission)
-
-## Quiz Questions
-1. What are the two parts of self-inspection?
-2. List 5 things to check in exterior inspection.
-3. List 5 things to check in interior inspection.
-4. What tyre conditions should you check?
-5. What emergency equipment should be in the vehicle?`,
+INTERIOR INSPECTION:
+• Brakes - properly adjusted
+• Steering - full range of motion
+• Indicators - operational
+• Transmission - shift into any gear
+• Oil level - check and top up
+• Coolant - check level
+• Battery - check connections
+• Leaks - check for any fluid leaks`,
         duration: '2 hours',
-        key_points: [
-            'Check tyres, lights, mirrors before every journey',
-            'Ensure all emergency equipment is present',
-            'Verify paperwork (license, registration, insurance)',
-            'Check brakes, steering, indicators',
-            'Inspect oil, coolant, battery for leaks'
-        ]
-    }
-];
-
-// Continue for units 7-21...
-// For brevity, I'll show the pattern - you can add all 21 units
-
-// Units 7-21 would continue with same structure
-const units7to21 = [
-    {
-        unit_number: 7,
-        title: 'Observation',
-        content: `# UNIT 7: OBSERVATION
-
-## Driver Visibility
-The maximum distance at which a driver can clearly identify objects around the car.
-
-## Types of Mirrors
-
-### 1. Rear View Mirror (Interior Mirror)
-- Flat glass - no distortion
-- Judge speed and distance of following traffic
-- Adjust only when stationary
-- View whole rear window
-
-### 2. Exterior Mirror
-- Convex mirrors - curved glass
-- Wider field of vision
-- Vehicles appear smaller and further away
-- Adjust so horizon appears in middle
-
-### Blind Spot
-The area around the vehicle that the driver cannot directly observe.
-
-#### Check blind spot before:
-- Changing direction when motorcyclists/cyclists are close
-- Overtaking on dual carriageway
-- Changing lanes
-- When potential hazard may be obscured
-
-## Key Takeaways
-- Use all mirrors for complete view
-- Understand blind spot limitations
-- Check blind spot before lane changes
-
-## Quiz Questions
-1. What is driver visibility?
-2. What is the difference between rear view and exterior mirrors?
-3. What is a blind spot?
-4. When should you check your blind spot?`,
-        duration: '2 hours',
-        key_points: [
-            'Driver visibility = maximum distance to identify objects',
-            'Rear view mirror: flat glass, no distortion',
-            'Exterior mirrors: convex, wider view but distance harder to judge',
-            'Blind spot: area driver cannot directly observe',
-            'Check blind spot before changing lanes or overtaking'
-        ]
+        key_points: ['Check tyres, lights, mirrors before journey', 'Verify emergency equipment', 'Check brakes and steering']
     },
     {
+        course_id: 1,
+        unit_number: 7,
+        title: 'Observation',
+        content: `UNIT 7: OBSERVATION
+
+MIRROR TYPES:
+1. Rear View Mirror (Interior) - Flat glass, no distortion
+2. Exterior Mirrors - Convex, wider field of vision
+
+BLIND SPOT: Area the driver cannot directly observe
+
+Check blind spot before:
+• Changing direction when motorcyclists/cyclists are close
+• Overtaking on dual carriageway
+• Changing lanes
+• When potential hazard may be obscured
+
+To enhance visibility:
+• Check interior mirror first, then door mirror
+• Look for potential hazards (vehicles behind, approaching quickly)
+• A vehicle too close behind: slow earlier for more reaction time`,
+        duration: '2 hours',
+        key_points: ['Rear view mirror: flat glass, no distortion', 'Exterior mirrors: convex, wider view', 'Check blind spot before lane changes']
+    },
+    {
+        course_id: 1,
         unit_number: 8,
         title: 'Vehicle Control',
-        content: `# UNIT 8: VEHICLE CONTROL
+        content: `UNIT 8: VEHICLE CONTROL
 
-## Driving Preparation
-- Adjust driving seat for comfort
-- Adjust mirrors if necessary
-- Check doors shut properly
-- Fasten seat belt (all passengers)
-- Sit in correct driving position (back supported, feet reach pedals)
-- Hold steering wheel correctly (10-to-2 or 9-and-3 position)
-- Check dashboard instruments
-
-## To Start the Vehicle
-1. Fully depress clutch pedal (wait 3 seconds)
+TO START THE VEHICLE:
+1. Depress clutch pedal fully
 2. Put hand brake ON
-3. Turn ignition switch ON
-4. Turn motor switch ON
-5. Start motor, release key when engine starts
-6. Step lightly on accelerator to warm engine
-7. Check rear view mirrors
-8. Give proper signal
-9. Select appropriate gear
-10. Increase engine speed
-11. Move handbrake OFF
-12. Let clutch rise until engine speed decreases
+3. Turn ignition ON
+4. Start motor, release key when engine starts
+5. Check mirrors
+6. Give proper signal
+7. Select appropriate gear
+8. Move handbrake OFF
+9. Let clutch rise until engine speed decreases
 
-## To Stop the Vehicle
-1. Check mirrors (safe to stop)
-2. Signal properly
-3. Remove foot from accelerator
-4. Apply foot brake pressure
-5. Depress clutch as car comes to rest
-6. Set hand brake ON
-7. Put gear in 1st position
-8. Switch off engine
-9. Remove feet from pedals
+GEAR SPEEDS:
+• 1st Gear: 0-30 km/h (moving off)
+• 2nd Gear: Slow traffic, downhill
+• 3rd Gear: 35-70 km/h
+• 4th Gear: 60-110 km/h (overtaking)
+• 5th Gear: 80-110 km/h (highways)
 
-## Using the Gears
-
-| Gear | Speed Range | Use |
-|------|-------------|-----|
-| 1st Gear | 0-30 km/h | Moving off from stationary |
-| 2nd Gear | 15-40 km/h | Slow moving traffic, downhill |
-| 3rd Gear | 35-70 km/h | Normal driving |
-| 4th Gear | 60-110 km/h | Higher speeds, overtaking |
-| 5th Gear | 80-110 km/h | Highways |
-
-## Steering the Vehicle
-- Hold steering wheel correctly (10-and-2 or 9-and-3)
-- For straight course, aim car in desired direction
-- To change direction, pull steering down in direction you wish to turn
-
-## Parking at the Kerb
-1. Check mirrors
-2. Locate safe parking position
-3. Use indicator signals
-4. Slow down (cover brake and clutch)
-5. Move to suitable distance from kerb
-6. Apply brake gently
-7. Press clutch 5 metres from stop
-8. Stop, apply handbrake, select neutral
-
-## Types of Turns
-- **J-turn**: Reversing vehicle turns 180° and continues forward
-- **U-turn**: Forward vehicle turns 180° opposite direction
-
-## Driving on Bends
-- Note how sharp bend is
-- Adjust speed accordingly
-- Use MSM technique
-- Slow down, select lower gear
-- Don't brake while steering round bend
-
-## Driving on Hills
-- Downhill: Switch to lower gear for engine braking
-- Uphill: Switch to lower gear to maintain speed
-
-## Key Takeaways
-- Always complete driving preparation before moving
-- Use appropriate gear for speed
-- Practice proper steering technique
-- Know different parking methods
-
-## Quiz Questions
-1. What steps should you take before driving?
-2. What is the correct procedure to start a vehicle?
-3. What speed range is appropriate for 3rd gear?
-4. How do you park at the kerb?
-5. What is the difference between J-turn and U-turn?`,
+TURNS:
+• J-turn: Reverse to forward 180°
+• U-turn: Forward to opposite direction`,
         duration: '6 hours',
-        key_points: [
-            'Adjust seat and mirrors before driving',
-            'Always fasten seat belt',
-            'MSM: Mirror, Signal, Manoeuvre',
-            '1st gear: 0-30 km/h, 5th gear: 80-110 km/h',
-            'Angle parking: forward in, reverse out',
-            'J-turn: reverse to forward 180°, U-turn: forward to opposite'
-        ]
+        key_points: ['1st gear: 0-30 km/h, 5th gear: 80-110 km/h', 'J-turn: reverse to forward', 'U-turn: forward to opposite']
+    },
+    {
+        course_id: 1,
+        unit_number: 9,
+        title: 'Communication on the Road',
+        content: `UNIT 9: COMMUNICATION ON THE ROAD
+
+MSM TECHNIQUE (Mirror, Signal, Manoeuvre):
+1. MIRROR - Check interior mirror, then door mirror
+2. SIGNAL - Apply signal to direction intended
+3. MANOEUVRE - Execute the movement
+
+TRAFFIC LIGHT SIGNALS:
+• RED: STOP
+• RED + AMBER: STOP, get ready
+• GREEN: Go if road clear
+• AMBER: STOP at the line
+
+HAND SIGNALS:
+• Left turn: Arm out, rotating forward
+• Right turn: Arm out straight
+• Slowing down: Arm out, moving up and down`,
+        duration: '2 hours',
+        key_points: ['MSM: Mirror, Signal, Manoeuvre', 'Red: STOP, Green: Go if clear', 'Hand signals for turning']
+    },
+    {
+        course_id: 1,
+        unit_number: 10,
+        title: 'Speed Management',
+        content: `UNIT 10: SPEED MANAGEMENT
+
+THE 4 SECOND RULE:
+When vehicle ahead passes landmark, count 4 seconds. If you pass before finishing, you're too close.
+
+BRAKING DISTANCE: Distance from hitting brakes to complete stop
+
+THINKING DISTANCE: Distance from deciding to brake to actually braking
+
+STOPPING DISTANCE = Thinking Distance + Braking Distance
+
+FREE WHEELING (COASTING):
+• Moving vehicle without using power
+• RISKS: Reduces control, increases brake wear, doesn't save fuel
+
+PROGRESSIVE BRAKING is safer than freewheeling`,
+        duration: '3 hours',
+        key_points: ['4 Second Rule for following distance', 'Stopping = thinking + braking distance', 'Progressive braking is safer']
+    },
+    {
+        course_id: 1,
+        unit_number: 11,
+        title: 'Space Management',
+        content: `UNIT 11: SPACE MANAGEMENT
+
+ROAD CONDITIONS:
+• Open Condition - Clear broad view
+• Closed Conditions - Limited space, restricted view
+• Changing Conditions - Variable speed/road/weather
+
+TO MANAGE SPACE:
+• Drive at same speed as surrounding vehicles
+• Maintain safe following distance
+• Keep appropriate space envelope
+
+SPACE RECOVERY (when insufficient space):
+• Signal to indicate intention to slow
+• Turn slowly to create more space
+• Don't reverse (affects vehicles behind)
+
+POSITION TO 'SEE AND BE SEEN'`,
+        duration: '2 hours',
+        key_points: ['Open: clear view, Closed: restricted', 'Maintain following distance', 'Position to see and be seen']
+    },
+    {
+        course_id: 1,
+        unit_number: 12,
+        title: 'Emergency Manoeuvres',
+        content: `UNIT 12: EMERGENCY MANOEUVRES
+
+BRAKE FAILURE:
+• Pump brake pedal to restore pressure
+• If fails, apply parking brake gently
+
+BLOWOUTS:
+• Keep firm grip on steering wheel
+• DON'T slam on brakes
+• Let car slow gradually
+• Pull to side when safe
+
+WHEEL OFF PAVEMENT:
+• Hold steering firmly
+• Take foot off accelerator
+• When under control, steer towards pavement
+
+HEADLIGHTS FAIL:
+• Check switch immediately
+• If off, keep left, stop safely
+
+DEFENSIVE DRIVING: Cautious driving anticipating hazards`,
+        duration: '3 hours',
+        key_points: ['Brake failure: pump brakes, then hand brake', 'Blowout: firm grip, no sudden braking', 'Defensive driving: anticipate hazards']
+    },
+    {
+        course_id: 1,
+        unit_number: 13,
+        title: 'Skid Control and Recovery',
+        content: `UNIT 13: SKID CONTROL AND RECOVERY
+
+CAUSES OF SKIDS:
+• Driving too fast for conditions
+• Sudden, hard braking
+• Turning too fast
+
+TYPES OF SKIDDING:
+• Front Wheel Skid - Vehicle off course
+• Rear Wheel Skid - Rear swings out
+• Aquaplaning - Tyres lose contact on wet roads
+
+SKID RECOVERY:
+1. Take feet off accelerator
+2. Release and gently reapply brakes
+3. Turn steering wheel in desired direction
+4. Counter-steer as needed
+
+AQUAPLANING PREVENTION:
+• Reduce speed in wet conditions
+• Correct tyre pressure
+• Proper tyre tread depth`,
+        duration: '2 hours',
+        key_points: ['Skids from: excess speed, hard braking', 'Aquaplaning: tyres lose contact on wet roads', 'Recovery: off accelerator, gentle brakes']
+    },
+    {
+        course_id: 1,
+        unit_number: 14,
+        title: 'Adverse Driving Conditions',
+        content: `UNIT 14: ADVERSE DRIVING CONDITIONS
+
+NIGHT DRIVING:
+• Slow down, especially unlit roads
+• Don't over-drive headlights
+• Use low beams within 150m of oncoming vehicle
+
+FOG:
+• Use low beam headlights (high beams reflect off moisture)
+• Don't overtake or change lanes
+• If visibility decreasing, move off road
+
+RAIN:
+• Rain makes road slippery
+• Smooth steering, braking, accelerating
+• Leave more space between vehicles
+• Stay out of puddles
+
+EMERGENCY STEERING METHODS:
+• Push-pull method - hands shuffle, no crossing
+• Fixed-hand method - rapid 180° steering
+
+ABS BRAKING: Use "plant and steer" - hold brake down and steer`,
+        duration: '4 hours',
+        key_points: ['Night: don\'t over-drive headlights', 'Fog: low beams, pull off if needed', 'Rain: smooth inputs, increase distance']
+    },
+    {
+        course_id: 1,
+        unit_number: 15,
+        title: 'Preventive Maintenance',
+        content: `UNIT 15: PREVENTIVE MAINTENANCE
+
+MAINTENANCE INCLUDES:
+• Vehicle inspection
+• Lubrication
+• Adjustment
+• Cleaning
+• Testing
+• Repair
+
+COMMON ISSUES:
+
+Tyres/Steering:
+• Puncture → Change wheel
+• Heavy steering → Seek assistance
+• Vibrations → Balance wheels
+
+Brakes:
+• Vehicle pulls to side → Seek assistance
+• Warning light → Check fluid level
+
+Lights:
+• Lamp doesn't light → Check/replace bulb
+• Irregular flashing → Check/replace fuse
+
+Engine:
+• Won't start → Check fuel, battery
+• Overheating → Check coolant`,
+        duration: '3 hours',
+        key_points: ['PM includes inspection, lubrication, repair', 'Check tyres, brakes, lights regularly', 'Engine issues: fuel, battery, coolant']
+    },
+    {
+        course_id: 1,
+        unit_number: 16,
+        title: 'Conditions of Carriage',
+        content: `UNIT 16: CONDITIONS OF CARRIAGE
+
+PSV (Public Service Vehicle) REQUIREMENTS:
+• Provide statement of liability
+• State fares/ticketing prices
+• Indicate exceptions
+• Abide by code of conduct
+• Address restricted items
+• Lost property procedures
+
+LOAD LIMITS FOR CATEGORY B:
+• Maximum passengers: Not more than seven
+• Maximum load: GVW up to 3,500kg
+
+LOADING GUIDELINES:
+• Items as low as possible, close to centre
+• Don't put items on roof without designated rack
+• Don't overload
+• Check tyre pressure for weight`,
+        duration: '2 hours',
+        key_points: ['PSV: statement of liability, fare pricing', 'Category B: max 7 passengers', 'Load low and centered']
+    },
+    {
+        course_id: 1,
+        unit_number: 17,
+        title: 'Hazardous Materials',
+        content: `UNIT 17: HAZARDOUS MATERIALS
+
+CHARACTERISTICS:
+• Flammable - can burn easily
+• Corrosive - rusts or decomposes
+• Reactive - can explode
+• Toxic - poisonous
+
+9 CLASSES OF HAZARDOUS MATERIALS:
+1. Explosives
+2. Gases
+3. Flammable Liquids
+4. Flammable Solids
+5. Oxidizing Substances
+6. Toxic & Infectious Substances
+7. Radioactive Material
+8. Corrosives
+9. Miscellaneous Dangerous Goods
+
+REQUIREMENTS:
+• Driver must get legal approval
+• Special equipment may be required
+• Licensed by KBS, NEMA, and NTSA
+
+DO NOT handle hazardous material without proper licensing`,
+        duration: '4 hours',
+        key_points: ['Hazardous: flammable, corrosive, reactive, toxic', '9 classes from Explosives to Miscellaneous', 'Need special licensing']
+    },
+    {
+        course_id: 1,
+        unit_number: 18,
+        title: 'Emergency Procedures',
+        content: `UNIT 18: EMERGENCY PROCEDURES
+
+STEPS AT CRASH SCENE:
+1. Set reflector triangles 50m behind and ahead
+2. Call emergency services (police, ambulance)
+3. Move uninjured people to safety
+4. DON'T move injured unless immediate danger
+5. Stay at scene until police arrive
+
+FIRST AID - Dr. A.B.C:
+• D = Danger: Make safe
+• R = Response: Check for response
+• A = Airway: Clear throat
+• B = Breathing: Check for 10 seconds
+• C = Circulation: Check pulse
+
+RECOVERY POSITION:
+• Stable position on side to prevent choking
+
+BLEEDING TREATMENT:
+• Apply firm pressure over wound
+• Raise bleeding limb if no broken bones`,
+        duration: '3 hours',
+        key_points: ['Reflector triangles 50m behind/ahead', 'Dr. A.B.C: Danger, Response, Airway, Breathing, Circulation', 'Apply pressure to bleeding wounds']
+    },
+    {
+        course_id: 1,
+        unit_number: 19,
+        title: 'Work Planning',
+        content: `UNIT 19: WORK PLANNING
+
+PREPARING FOR JOURNEY:
+• Name, address, phone of sender
+• Pick-up phone number
+• Appointment time
+• Requirements for securing load
+
+MANAGING THE TRIP:
+• Distance (may need co-driver for long trips)
+• Time/Traffic conditions
+• Meals (plan ahead)
+• Fatigue (don't start tired)
+• Weather conditions
+
+LEGAL LIMITS (Traffic Act 66A):
+• No person shall drive PSV/commercial vehicle for more than 8 hours in 24-hour period
+
+COMPLETING RECORDS:
+• Provide summarized record of trip
+• Work tickets or trip cards`,
+        duration: '2 hours',
+        key_points: ['Plan: contact info, appointment', 'Legal limit: max 8 hours driving', 'Complete trip records']
+    },
+    {
+        course_id: 1,
+        unit_number: 20,
+        title: 'Customer Care',
+        content: `UNIT 20: CUSTOMER CARE
+
+ESSENTIAL SKILLS:
+• Communication skills
+• Handling customer expectations
+• Handling customers with special needs
+• Knowledge of sexual harassment and discrimination
+
+COURTESY ON THE ROAD:
+• Get proper training and license
+• Apply road safety techniques
+• Have positive attitude
+• Take responsibility for actions
+• Keep vehicle and number plates clean
+
+BEFORE TRIP:
+• Pick/drop off at appropriate points
+• Provide sufficient time for boarding/alighting
+• Assist passengers who need help
+• Address customers respectfully
+
+SEXUAL HARASSMENT:
+• Unwelcome requests for sexual contact
+• Spoken/written language of sexual nature
+
+RESPONSE:
+• Speak up, address with authority
+• Seek assistance from police`,
+        duration: '2 hours',
+        key_points: ['Essential: communication, handling expectations', 'Be courteous, visible, responsible', 'Report harassment to authority']
+    },
+    {
+        course_id: 1,
+        unit_number: 21,
+        title: 'The Examination - 1000 Quiz Bank',
+        content: `UNIT 21: THE EXAMINATION - 1000 QUIZ BANK
+
+To get your driving licence, follow NTSA registration procedure.
+
+PREPARATION:
+• Prepare for practical and theory exam
+• Study all 20 previous units
+• Review traffic signs and model town
+• Practice with quiz bank
+
+ON EXAM DAY:
+• Go to examination centre on time
+• Bring required documents
+
+EXAM COVERS:
+• All 20 units from Introduction to Customer Care
+• Traffic signs (regulatory, warning, information)
+• Model town illustrations and rules
+• Highway Code and Traffic Act
+
+QUIZ BANK FEATURES:
+• 1000+ practice questions
+• Multiple choice format
+• Answers with explanations
+• Covers all exam topics`,
+        duration: '10 hours',
+        key_points: ['Follow NTSA registration', 'Study all 20 units and traffic signs', '1000+ practice questions available']
     }
 ];
 
-// Add all 21 units
-const allUnits = [...units, ...units7to21];
-
-// Continue adding units 9-21 here
-// For units 9-21, follow the same pattern
-
-async function pushLearnerHub() {
-    console.log('📚 Pushing Learner Hub course material to Supabase...\n');
+// ============================================
+// PUSH FUNCTION
+// ============================================
+async function pushAllMaterial() {
+    console.log('🚀 Pushing all course material to Supabase...\n');
     
-    // First, ensure the course exists
-    const { error: courseError } = await supabase
-        .from('courses')
-        .upsert(learnerHubCourse, { onConflict: 'id' });
+    let totalSuccess = 0;
+    let totalErrors = 0;
     
-    if (courseError) {
-        console.error('❌ Failed to create course:', courseError.message);
-    } else {
-        console.log('✅ Course created: Learner Hub');
-    }
-    
-    // Push each unit as a separate record in a "units" table
-    // Or add to course_content table
-    
-    for (const unit of allUnits) {
-        const unitData = {
-            course_id: 1,
-            unit_number: unit.unit_number,
-            title: unit.title,
-            content: unit.content,
-            duration: unit.duration,
-            key_points: unit.key_points
-        };
-        
-        const { error } = await supabase
-            .from('course_units')
-            .upsert(unitData, { onConflict: 'course_id, unit_number' });
-        
-        if (error) {
-            console.error(`❌ Unit ${unit.unit_number}: ${error.message}`);
-        } else {
-            console.log(`✅ Unit ${unit.unit_number}: ${unit.title}`);
+    // 1. Push Courses
+    console.log('📚 Pushing 8 courses...');
+    for (const course of courses) {
+        try {
+            const { error } = await supabase
+                .from('courses')
+                .upsert(course, { onConflict: 'id' });
+            
+            if (error) throw error;
+            console.log(`   ✅ Course ${course.id}: ${course.title}`);
+            totalSuccess++;
+        } catch (error) {
+            console.error(`   ❌ Course ${course.id}: ${error.message}`);
+            totalErrors++;
         }
     }
     
-    console.log('\n🎉 Learner Hub material pushed successfully!');
+    // 2. Push Learner Hub Units
+    console.log('\n📖 Pushing Learner Hub units (21 units)...');
+    for (const unit of learnerHubUnits) {
+        try {
+            const { error } = await supabase
+                .from('course_units')
+                .upsert(unit, { onConflict: 'course_id, unit_number' });
+            
+            if (error) throw error;
+            console.log(`   ✅ Unit ${unit.unit_number}: ${unit.title}`);
+            totalSuccess++;
+        } catch (error) {
+            console.error(`   ❌ Unit ${unit.unit_number}: ${error.message}`);
+            totalErrors++;
+        }
+    }
+    
+    // 3. Verification
+    console.log('\n🔍 Verifying data...');
+    
+    const { data: verifyCourses } = await supabase
+        .from('courses')
+        .select('id, title')
+        .order('id');
+    
+    const { data: verifyUnits } = await supabase
+        .from('course_units')
+        .select('unit_number, title')
+        .eq('course_id', 1)
+        .order('unit_number');
+    
+    console.log('\n📊 SUMMARY:');
+    console.log('=' .repeat(50));
+    console.log(`✅ Total successful: ${totalSuccess}`);
+    console.log(`❌ Total errors: ${totalErrors}`);
+    console.log('=' .repeat(50));
+    
+    console.log('\n📚 Courses in database:');
+    verifyCourses?.forEach(c => console.log(`   ${c.id}. ${c.title}`));
+    
+    console.log(`\n📖 Learner Hub units in database: ${verifyUnits?.length || 0}/21`);
+    if (verifyUnits && verifyUnits.length === 21) {
+        console.log('   ✅ All 21 units successfully loaded!');
+    } else if (verifyUnits) {
+        console.log(`   ⚠️ Only ${verifyUnits.length} of 21 units loaded`);
+    } else {
+        console.log('   ❌ No units found in database');
+    }
+    
+    console.log('\n🎉 Push complete!');
 }
 
 // Run the function
-pushLearnerHub();
+pushAllMaterial();
