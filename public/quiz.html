@@ -189,4 +189,152 @@
         }
         
         async function loadCategories() {
-            const {
+            const { data } = await supabase.from('quiz_questions').select('category');
+            const categories = ['All', ...new Set(data.map(q => q.category))];
+            const categoryDiv = document.createElement('div');
+            categoryDiv.className = 'category-filter';
+            categories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.textContent = cat;
+                btn.className = `category-btn ${selectedCategory === cat ? 'active' : ''}`;
+                btn.onclick = () => {
+                    selectedCategory = cat;
+                    loadQuestions();
+                };
+                categoryDiv.appendChild(btn);
+            });
+            document.getElementById('container').prepend(categoryDiv);
+        }
+        
+        function renderQuestion() {
+            if (currentIndex >= questions.length) {
+                showResults();
+                return;
+            }
+            
+            const q = questions[currentIndex];
+            const userAnswer = userAnswers[currentIndex];
+            
+            const container = document.getElementById('container');
+            container.innerHTML = '';
+            
+            const categoryDiv = document.createElement('div');
+            categoryDiv.className = 'category-filter';
+            const allBtn = document.createElement('button');
+            allBtn.textContent = `📂 ${q.category}`;
+            allBtn.className = 'category-btn';
+            allBtn.style.background = 'var(--neon-green)';
+            categoryDiv.appendChild(allBtn);
+            container.appendChild(categoryDiv);
+            
+            const quizCard = document.createElement('div');
+            quizCard.className = 'quiz-card';
+            
+            const header = document.createElement('div');
+            header.className = 'quiz-header';
+            header.innerHTML = `
+                <div class="progress">Question ${currentIndex + 1} of ${questions.length}</div>
+                <div class="score">Score: ${userAnswers.filter(a => a?.isCorrect).length || 0}</div>
+            `;
+            quizCard.appendChild(header);
+            
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question-text';
+            questionDiv.textContent = q.question;
+            quizCard.appendChild(questionDiv);
+            
+            q.options.forEach((option, idx) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = `option ${userAnswer?.selected === idx ? 'selected' : ''}`;
+                optionDiv.innerHTML = `<span style="font-weight:bold;">${String.fromCharCode(65+idx)}.</span> ${option}`;
+                optionDiv.onclick = () => selectAnswer(idx, q.correct_answer, q.explanation);
+                quizCard.appendChild(optionDiv);
+            });
+            
+            if (userAnswer?.selected !== undefined) {
+                const explanation = document.createElement('div');
+                explanation.className = 'explanation';
+                explanation.innerHTML = `
+                    <strong>${userAnswer.isCorrect ? '✅ Correct!' : '❌ Incorrect'}</strong><br>
+                    ${q.explanation}
+                `;
+                quizCard.appendChild(explanation);
+            }
+            
+            if (userAnswer?.selected !== undefined && currentIndex < questions.length - 1) {
+                const nextBtn = document.createElement('button');
+                nextBtn.className = 'btn-next';
+                nextBtn.textContent = 'Next Question →';
+                nextBtn.onclick = () => {
+                    currentIndex++;
+                    renderQuestion();
+                };
+                quizCard.appendChild(nextBtn);
+            } else if (currentIndex === questions.length - 1 && userAnswer?.selected !== undefined) {
+                const nextBtn = document.createElement('button');
+                nextBtn.className = 'btn-next';
+                nextBtn.textContent = 'Show Results';
+                nextBtn.onclick = showResults;
+                quizCard.appendChild(nextBtn);
+            }
+            
+            container.appendChild(quizCard);
+        }
+        
+        function selectAnswer(selected, correct, explanation) {
+            if (userAnswers[currentIndex]) return;
+            
+            const isCorrect = selected === correct;
+            userAnswers[currentIndex] = {
+                selected,
+                isCorrect,
+                explanation
+            };
+            
+            renderQuestion();
+            
+            // Save attempt to database
+            if (currentUser) {
+                supabase.from('quiz_attempts').insert({
+                    user_id: currentUser.id,
+                    question_id: questions[currentIndex].id,
+                    user_answer: selected,
+                    is_correct: isCorrect
+                });
+            }
+        }
+        
+        function showResults() {
+            const total = questions.length;
+            const correct = userAnswers.filter(a => a?.isCorrect).length;
+            const percentage = Math.round((correct / total) * 100);
+            
+            const container = document.getElementById('container');
+            container.innerHTML = `
+                <div class="quiz-card result-card">
+                    <h2>🎉 Quiz Complete!</h2>
+                    <div class="final-score">${correct}/${total}</div>
+                    <div class="score">${percentage}%</div>
+                    ${percentage >= 70 ? '<p style="color:var(--neon-green);">✅ Congratulations! You passed!</p>' : '<p style="color:#ff9800;">📚 Keep practicing to improve your score!</p>'}
+                    <button class="btn-next" onclick="restartQuiz()">Restart Quiz</button>
+                    <button class="btn-next" style="margin-left:1rem;background:var(--secondary-dark);border:1px solid var(--neon-green);" onclick="location.href='/'">Back to Home</button>
+                </div>
+            `;
+        }
+        
+        function restartQuiz() {
+            userAnswers = [];
+            currentIndex = 0;
+            renderQuestion();
+        }
+        
+        async function init() {
+            if (!await checkAuth()) return;
+            await loadCategories();
+            await loadQuestions();
+        }
+        
+        init();
+    </script>
+</body>
+</html>
