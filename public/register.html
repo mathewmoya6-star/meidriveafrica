@@ -7,13 +7,9 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             background: linear-gradient(135deg, #667eea, #764ba2);
             min-height: 100vh;
             display: flex;
@@ -29,40 +25,32 @@
             max-width: 450px;
             text-align: center;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            animation: slideUp 0.5s ease;
-        }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
         }
         .logo { font-size: 48px; margin-bottom: 20px; }
         h2 { color: #041B3D; margin-bottom: 10px; }
-        .subtitle { color: #666; margin-bottom: 30px; font-size: 14px; }
+        .subtitle { color: #666; margin-bottom: 30px; }
         .input-group { margin-bottom: 20px; text-align: left; }
         .input-group label { display: block; margin-bottom: 8px; color: #555; font-weight: 500; }
         .input-group input {
             width: 100%; padding: 12px; border: 2px solid #e0e0e0;
-            border-radius: 12px; font-size: 16px; transition: all 0.3s;
+            border-radius: 12px; font-size: 16px;
         }
         .input-group input:focus {
             outline: none; border-color: #00FF88;
-            box-shadow: 0 0 0 3px rgba(0,255,136,0.1);
         }
         button {
             width: 100%; padding: 14px; background: #00FF88; color: #041B3D;
             border: none; border-radius: 12px; font-weight: bold; cursor: pointer;
-            font-size: 16px; transition: transform 0.2s;
+            font-size: 16px;
         }
-        button:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0,255,136,0.3); }
+        button:hover { transform: translateY(-2px); }
         .error {
-            color: #e74c3c; margin-top: 10px; font-size: 14px;
-            background: #fde8e8; padding: 10px; border-radius: 8px;
-            display: none;
+            color: #e74c3c; margin-top: 10px; background: #fde8e8;
+            padding: 10px; border-radius: 8px; display: none;
         }
         .success {
-            color: #27ae60; margin-top: 10px; font-size: 14px;
-            background: #d5f4e6; padding: 10px; border-radius: 8px;
-            display: none;
+            color: #27ae60; margin-top: 10px; background: #d5f4e6;
+            padding: 10px; border-radius: 8px; display: none;
         }
         .spinner {
             display: none; width: 24px; height: 24px;
@@ -72,7 +60,7 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         .auth-switch { margin-top: 20px; color: #666; }
-        .auth-switch a { color: #00FF88; text-decoration: none; font-weight: bold; }
+        .auth-switch a { color: #00FF88; text-decoration: none; }
         .back-home { margin-top: 20px; display: inline-block; color: #666; text-decoration: none; }
         @media (max-width: 480px) { .register-container { padding: 30px 20px; } }
     </style>
@@ -137,9 +125,7 @@
             errorDiv.textContent = message;
             errorDiv.style.display = 'block';
             successDiv.style.display = 'none';
-            setTimeout(() => {
-                errorDiv.style.display = 'none';
-            }, 5000);
+            setTimeout(() => errorDiv.style.display = 'none', 5000);
         }
         
         function showSuccess(message) {
