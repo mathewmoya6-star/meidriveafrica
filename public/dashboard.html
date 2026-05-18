@@ -1,245 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - MEI Drive Africa</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #0A234F;
-            color: white;
-        }
-        .navbar {
-            background: #041B3D;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #00FF88;
-        }
-        .logo { font-size: 1.5rem; font-weight: bold; color: #00FF88; cursor: pointer; }
-        .logout-btn {
-            background: rgba(255,68,68,0.2);
-            border: 1px solid #ff4444;
-            color: #ff4444;
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-        }
-        .container { max-width: 1200px; margin: auto; padding: 2rem; }
-        .welcome-card {
-            background: #041B3D;
-            border-radius: 16px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            border: 1px solid rgba(0,255,136,0.15);
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        .stat-card {
-            background: #041B3D;
-            border-radius: 16px;
-            padding: 1.5rem;
-            text-align: center;
-            border: 1px solid rgba(0,255,136,0.15);
-        }
-        .stat-card h2 { font-size: 2rem; color: #00FF88; }
-        .courses-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-        .course-card {
-            background: #041B3D;
-            border-radius: 16px;
-            padding: 1.5rem;
-            border: 1px solid rgba(0,255,136,0.12);
-            cursor: pointer;
-        }
-        .course-card:hover { transform: translateY(-3px); border-color: #00FF88; }
-        .progress-bar {
-            background: #0A234F;
-            border-radius: 10px;
-            height: 8px;
-            margin: 1rem 0;
-        }
-        .progress {
-            background: #00FF88;
-            border-radius: 10px;
-            height: 100%;
-            width: 0%;
-        }
-        .btn-continue {
-            background: #00FF88;
-            color: #041B3D;
-            border: none;
-            padding: 10px;
-            border-radius: 25px;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 1rem;
-            font-weight: bold;
-        }
-        .loading { text-align: center; padding: 3rem; }
-        .spinner {
-            width: 40px; height: 40px;
-            border: 3px solid #041B3D;
-            border-top-color: #00FF88;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        @media (max-width: 768px) { .courses-grid { grid-template-columns: 1fr; } }
-    </style>
+<title>Dashboard</title>
+
+<script type="module">
+import { supabase } from "./supabase.js";
+
+let user;
+
+async function load(){
+  const { data } = await supabase.auth.getUser();
+  user = data.user;
+
+  if(!user){
+    window.location.href = "login.html";
+    return;
+  }
+
+  document.getElementById("user").innerText = user.email;
+
+  const { data: enrollments } = await supabase
+    .from("enrollments")
+    .select("*")
+    .eq("user_id", user.id);
+
+  document.getElementById("count").innerText = enrollments?.length || 0;
+}
+
+async function logout(){
+  await supabase.auth.signOut();
+  window.location.href = "login.html";
+}
+
+window.logout = logout;
+
+load();
+</script>
 </head>
+
 <body>
 
-<nav class="navbar">
-    <div class="logo" onclick="location.href='/'">MEI DRIVE AFRICA</div>
-    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
-</nav>
+<h1>Dashboard</h1>
 
-<div class="container">
-    <div class="welcome-card">
-        <h1>Welcome, <span id="userName">Learner</span>! 👋</h1>
-        <p>Continue your journey to becoming a certified driver</p>
-    </div>
+<p>Welcome: <span id="user"></span></p>
 
-    <div class="stats-grid">
-        <div class="stat-card"><h2 id="coursesEnrolled">0</h2><p>Courses Enrolled</p></div>
-        <div class="stat-card"><h2 id="avgProgress">0%</h2><p>Average Progress</p></div>
-    </div>
+<h3>Courses enrolled: <span id="count">0</span></h3>
 
-    <h2>My Courses</h2>
-    <div id="coursesContainer" class="courses-grid">
-        <div class="loading"><div class="spinner"></div><p>Loading your courses...</p></div>
-    </div>
-</div>
+<button onclick="logout()">Logout</button>
 
-<script>
-    const SUPABASE_URL = 'https://jeksrwrzzrczamxijvwl.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impla3Nyd3J6enJjemFteGlqdndsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NzYyMjAsImV4cCI6MjA5NDI1MjIyMH0.1poYpJKNFEVe2NTBkXBTH2bIHGk2yT8aqCU-OlJc4vs';
-    
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    let currentUser = null;
-    let userEnrollments = [];
-    
-    const allCourses = [
-        { id: 1, title: 'Learner Hub', icon: '🚗' },
-        { id: 2, title: 'PSV Training', icon: '🚌' },
-        { id: 3, title: 'School Bus/Van', icon: '🚸' },
-        { id: 4, title: 'EV Vehicle Course', icon: '⚡' },
-        { id: 5, title: 'Boda Boda', icon: '🛵' },
-        { id: 6, title: 'Professional Driver', icon: '🚛' },
-        { id: 7, title: 'e-Safety Library', icon: '📚' },
-        { id: 8, title: 'Quiz Bank', icon: '📝' }
-    ];
-    
-    async function checkAuth() {
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (!session) {
-            window.location.href = '/login.html';
-            return null;
-        }
-        
-        currentUser = session.user;
-        
-        const { data: profile } = await supabase
-            .from('profiles')
-            .select('full_name')
-            .eq('id', currentUser.id)
-            .single();
-        
-        document.getElementById('userName').textContent = profile?.full_name || currentUser.email.split('@')[0];
-        
-        return currentUser;
-    }
-    
-    async function loadEnrollments() {
-        if (!currentUser) return [];
-        
-        const { data: enrollments, error } = await supabase
-            .from('enrollments')
-            .select('course_id, progress')
-            .eq('user_id', currentUser.id);
-        
-        if (!error && enrollments) {
-            userEnrollments = enrollments;
-        }
-        
-        return userEnrollments;
-    }
-    
-    function displayDashboard() {
-        const container = document.getElementById('coursesContainer');
-        const enrolledIds = userEnrollments.map(e => e.course_id);
-        const enrolledCount = enrolledIds.length;
-        const avgProgress = enrolledCount > 0 
-            ? Math.round(userEnrollments.reduce((sum, e) => sum + (e.progress || 0), 0) / enrolledCount) 
-            : 0;
-        
-        document.getElementById('coursesEnrolled').textContent = enrolledCount;
-        document.getElementById('avgProgress').textContent = `${avgProgress}%`;
-        
-        if (enrolledCount === 0) {
-            container.innerHTML = `
-                <div style="text-align: center; padding: 3rem; background: #041B3D; border-radius: 16px;">
-                    <i class="fas fa-book-open" style="font-size: 3rem; color: #00FF88;"></i>
-                    <h3>No Courses Enrolled Yet</h3>
-                    <p>Browse our courses and start learning today!</p>
-                    <button class="btn-continue" style="width: auto; padding: 10px 30px;" onclick="location.href='/#courses'">
-                        Browse Courses →
-                    </button>
-                </div>
-            `;
-            return;
-        }
-        
-        const enrolledCourses = allCourses.filter(c => enrolledIds.includes(c.id));
-        
-        container.innerHTML = enrolledCourses.map(course => {
-            const enrollment = userEnrollments.find(e => e.course_id === course.id);
-            const progress = enrollment?.progress || 0;
-            
-            return `
-                <div class="course-card" onclick="location.href='/materials-display.html?id=${course.id}'">
-                    <div style="font-size: 2rem;">${course.icon}</div>
-                    <h3>${course.title}</h3>
-                    <div class="progress-bar">
-                        <div class="progress" style="width: ${progress}%"></div>
-                    </div>
-                    <p>${progress}% Complete</p>
-                    <button class="btn-continue">${progress > 0 ? 'Continue Learning →' : 'Start Course →'}</button>
-                </div>
-            `;
-        }).join('');
-    }
-    
-    async function logout() {
-        await supabase.auth.signOut();
-        localStorage.removeItem('access_token');
-        window.location.href = '/';
-    }
-    
-    document.getElementById('logoutBtn').addEventListener('click', logout);
-    
-    async function init() {
-        await checkAuth();
-        await loadEnrollments();
-        displayDashboard();
-    }
-    
-    init();
-</script>
 </body>
 </html>
