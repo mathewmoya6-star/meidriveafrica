@@ -5,15 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login - MEI Drive Africa</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             background: linear-gradient(135deg, #1a1a2e, #16213e);
             min-height: 100vh;
             display: flex;
@@ -28,13 +23,7 @@
             width: 100%;
             max-width: 400px;
             text-align: center;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             border: 1px solid rgba(0,255,136,0.2);
-            animation: slideUp 0.5s ease;
-        }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
         }
         .logo { font-size: 48px; margin-bottom: 20px; }
         h2 { color: #00FF88; margin-bottom: 10px; }
@@ -46,32 +35,20 @@
             display: inline-block;
             margin-bottom: 30px;
             font-size: 12px;
-            font-weight: bold;
         }
-        .input-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #B7C4D6;
-            font-weight: 500;
-        }
-        .input-group input {
+        input {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
+            margin: 10px 0;
             border: 2px solid rgba(0,255,136,0.2);
             border-radius: 12px;
             font-size: 16px;
-            transition: all 0.3s;
             background: #1a1a2e;
             color: white;
         }
-        .input-group input:focus {
+        input:focus {
             outline: none;
             border-color: #00FF88;
-            box-shadow: 0 0 0 3px rgba(0,255,136,0.1);
         }
         button {
             width: 100%;
@@ -83,51 +60,27 @@
             font-weight: bold;
             cursor: pointer;
             font-size: 16px;
-            transition: transform 0.2s;
+            margin-top: 10px;
         }
-        button:hover:not(:disabled) {
+        button:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 20px rgba(0,255,136,0.3);
-        }
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
         }
         .error {
             color: #ff4444;
             margin-top: 10px;
-            font-size: 14px;
-            background: rgba(255,68,68,0.1);
             padding: 10px;
+            background: rgba(255,68,68,0.1);
             border-radius: 8px;
             display: none;
         }
-        .spinner {
-            display: none;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #0f3460;
-            border-top-color: #00FF88;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin: 10px auto 0;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        .back-home {
+        .back {
             margin-top: 20px;
             display: inline-block;
             color: #B7C4D6;
             text-decoration: none;
-            font-size: 14px;
         }
-        .back-home:hover {
-            color: #00FF88;
-        }
-        @media (max-width: 480px) {
-            .login-container { padding: 30px 20px; }
-        }
+        .back:hover { color: #00FF88; }
     </style>
 </head>
 <body>
@@ -138,22 +91,12 @@
         
         <div id="error" class="error"></div>
         
-        <form id="adminLoginForm">
-            <div class="input-group">
-                <label><i class="fas fa-envelope"></i> Admin Email</label>
-                <input type="email" id="email" placeholder="admin@meidriveafrica.com" value="admin@meidriveafrica.com">
-            </div>
-            <div class="input-group">
-                <label><i class="fas fa-lock"></i> Password</label>
-                <input type="password" id="password" placeholder="Enter your password" value="Admin@2026">
-            </div>
-            <button type="submit" id="loginBtn">Login as Admin</button>
-        </form>
-        
-        <div id="loadingSpinner" class="spinner"></div>
+        <input type="email" id="email" placeholder="Admin Email">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="login()">Login as Admin</button>
         
         <div>
-            <a href="/" class="back-home">← Back to Home</a>
+            <a href="/" class="back">← Back to Home</a>
         </div>
     </div>
 
@@ -163,114 +106,39 @@
         
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
-        const form = document.getElementById('adminLoginForm');
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
-        const loginBtn = document.getElementById('loginBtn');
-        const errorDiv = document.getElementById('error');
-        const loadingSpinner = document.getElementById('loadingSpinner');
-        
-        function showError(message) {
-            errorDiv.textContent = message;
-            errorDiv.style.display = 'block';
-            setTimeout(() => {
-                errorDiv.style.display = 'none';
-            }, 5000);
-        }
-        
-        function setLoading(loading) {
-            if (loading) {
-                loadingSpinner.style.display = 'block';
-                loginBtn.disabled = true;
-                loginBtn.textContent = '';
-            } else {
-                loadingSpinner.style.display = 'none';
-                loginBtn.disabled = false;
-                loginBtn.textContent = 'Login as Admin';
-            }
-        }
-        
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('error');
             
-            const email = emailInput.value.trim();
-            const password = passwordInput.value;
+            errorDiv.style.display = 'none';
             
             if (!email || !password) {
-                showError('Please enter both email and password');
+                errorDiv.textContent = 'Please enter email and password';
+                errorDiv.style.display = 'block';
                 return;
             }
             
-            setLoading(true);
-            
-            try {
-                // Login with Supabase
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
-                
-                if (error) {
-                    setLoading(false);
-                    showError(error.message === 'Invalid login credentials' ? 'Invalid email or password' : error.message);
-                    return;
-                }
-                
-                if (data.user) {
-                    // Check admin role
-                    const { data: profile, error: profileError } = await supabase
-                        .from('profiles')
-                        .select('role, full_name')
-                        .eq('id', data.user.id)
-                        .single();
-                    
-                    if (profileError) {
-                        setLoading(false);
-                        showError('Error verifying admin privileges');
-                        await supabase.auth.signOut();
-                        return;
-                    }
-                    
-                    if (profile?.role === 'admin') {
-                        // Store admin session
-                        localStorage.setItem('adminToken', data.session.access_token);
-                        localStorage.setItem('adminEmail', email);
-                        localStorage.setItem('adminName', profile.full_name || 'Administrator');
-                        
-                        // Redirect to admin dashboard
-                        window.location.href = '/admin-dashboard.html';
-                    } else {
-                        setLoading(false);
-                        showError('Access denied. Admin privileges required.');
-                        await supabase.auth.signOut();
-                    }
-                }
-            } catch (err) {
-                setLoading(false);
-                showError('Network error. Please try again.');
-                console.error('Admin login error:', err);
-            }
-        });
-        
-        // Check existing admin session
-        const adminToken = localStorage.getItem('adminToken');
-        if (adminToken) {
-            supabase.auth.getUser(adminToken).then(({ data, error }) => {
-                if (!error && data.user) {
-                    window.location.href = '/admin-dashboard.html';
-                } else {
-                    localStorage.removeItem('adminToken');
-                    localStorage.removeItem('adminEmail');
-                    localStorage.removeItem('adminName');
-                }
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: password
             });
+            
+            if (error) {
+                errorDiv.textContent = error.message;
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            if (data.session) {
+                localStorage.setItem('adminToken', data.session.access_token);
+                window.location.href = '/admin-dashboard.html';
+            }
         }
         
-        passwordInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                form.dispatchEvent(new Event('submit'));
-            }
-        });
+        // Auto-fill for testing
+        document.getElementById('email').value = 'admin@meidriveafrica.com';
+        document.getElementById('password').value = 'Admin@2026';
     </script>
 </body>
 </html>
