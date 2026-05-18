@@ -1,10 +1,393 @@
-const courses = [
-    { id: 1, title: 'Learner Hub', icon: '🚗', progress: 0 },
-    { id: 2, title: 'PSV Training', icon: '🚌', progress: 0 },
-    { id: 3, title: 'School Bus/Van', icon: '🚸', progress: 0 },
-    { id: 4, title: 'EV Vehicle Course', icon: '⚡', progress: 0 },
-    { id: 5, title: 'Boda Boda', icon: '🛵', progress: 0 },
-    { id: 6, title: 'Professional Driver', icon: '🚛', progress: 0 },
-    { id: 7, title: 'e-Safety Library', icon: '📚', progress: 0 },
-    { id: 8, title: 'Quiz Bank', icon: '📝', progress: 0 }
-];
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dashboard - MEI Drive Africa</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --neon-green: #00FF88;
+            --dark-navy: #041B3D;
+            --secondary-dark: #0A234F;
+            --white: #FFFFFF;
+            --soft-gray: #B7C4D6;
+            --error: #ff4444;
+        }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--secondary-dark);
+            color: var(--white);
+        }
+        
+        /* Navbar */
+        .navbar {
+            background: var(--dark-navy);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(0, 255, 136, 0.15);
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--neon-green);
+            cursor: pointer;
+        }
+        .logo span { color: var(--white); }
+        .logout-btn {
+            background: rgba(255, 68, 68, 0.2);
+            border: 1px solid var(--error);
+            color: var(--error);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 2rem;
+        }
+        
+        /* Welcome Card */
+        .welcome-card {
+            background: var(--dark-navy);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(0, 255, 136, 0.15);
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: var(--dark-navy);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid rgba(0, 255, 136, 0.15);
+        }
+        .stat-card i { font-size: 2rem; color: var(--neon-green); margin-bottom: 0.5rem; display: block; }
+        .stat-card h2 { font-size: 2rem; color: var(--neon-green); margin-bottom: 0.25rem; }
+        .stat-card p { color: var(--soft-gray); }
+        
+        /* Courses Grid */
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        .course-card {
+            background: var(--dark-navy);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid rgba(0, 255, 136, 0.12);
+            transition: transform 0.3s;
+        }
+        .course-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--neon-green);
+        }
+        .course-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .course-card h3 { margin-bottom: 0.5rem; font-size: 1.1rem; }
+        .progress-bar {
+            background: var(--secondary-dark);
+            border-radius: 10px;
+            height: 8px;
+            margin: 1rem 0;
+        }
+        .progress {
+            background: var(--neon-green);
+            border-radius: 10px;
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .btn-continue {
+            background: var(--neon-green);
+            color: var(--dark-navy);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            margin-top: 1rem;
+        }
+        .btn-continue:hover { opacity: 0.9; transform: translateY(-1px); }
+        
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--dark-navy);
+            border-top-color: var(--neon-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            background: var(--dark-navy);
+            border-radius: 16px;
+        }
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--dark-navy);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            transform: translateX(400px);
+            transition: transform 0.3s;
+            z-index: 10000;
+            border-left: 4px solid var(--neon-green);
+        }
+        .toast.show { transform: translateX(0); }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .courses-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="logo" onclick="location.href='/'">MEI DRIVE <span>AFRICA</span></div>
+        <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="welcome-card">
+        <h1>Welcome, <span id="userName">Learner</span>! 👋</h1>
+        <p>Continue your journey to becoming a certified driver</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <i class="fas fa-book-open"></i>
+            <h2 id="coursesEnrolled">0</h2>
+            <p>Courses Enrolled</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-chart-line"></i>
+            <h2 id="avgProgress">0%</h2>
+            <p>Average Progress</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-certificate"></i>
+            <h2 id="certificates">0</h2>
+            <p>Certificates</p>
+        </div>
+    </div>
+
+    <h2>My Courses</h2>
+    <div id="coursesContainer" class="courses-grid">
+        <div class="loading"><div class="spinner"></div><p>Loading your courses...</p></div>
+    </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+    const SUPABASE_URL = 'https://jeksrwrzzrczamxijvwl.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impla3Nyd3J6enJjemFteGlqdndsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NzYyMjAsImV4cCI6MjA5NDI1MjIyMH0.1poYpJKNFEVe2NTBkXBTH2bIHGk2yT8aqCU-OlJc4vs';
+    
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    let currentUser = null;
+    let userEnrollments = [];
+    
+    // All available courses
+    const allCourses = [
+        { id: 1, title: 'Learner Hub', icon: '🚗', type: 'premium' },
+        { id: 2, title: 'PSV Training', icon: '🚌', type: 'premium' },
+        { id: 3, title: 'School Bus/Van', icon: '🚸', type: 'premium' },
+        { id: 4, title: 'EV Vehicle Course', icon: '⚡', type: 'premium' },
+        { id: 5, title: 'Boda Boda', icon: '🛵', type: 'premium' },
+        { id: 6, title: 'Professional Driver', icon: '🚛', type: 'premium' },
+        { id: 7, title: 'e-Safety Library', icon: '📚', type: 'free' },
+        { id: 8, title: 'Quiz Bank', icon: '📝', type: 'premium' }
+    ];
+    
+    function showToast(message, isError = false) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = `toast ${isError ? 'error' : ''}`;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+    
+    async function checkAuth() {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!session) {
+            window.location.href = '/login.html';
+            return null;
+        }
+        
+        currentUser = session.user;
+        
+        // Get user profile
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('full_name')
+            .eq('id', currentUser.id)
+            .single();
+        
+        document.getElementById('userName').textContent = profile?.full_name || currentUser.email.split('@')[0];
+        
+        return currentUser;
+    }
+    
+    async function loadUserEnrollments() {
+        if (!currentUser) return [];
+        
+        try {
+            const { data: enrollments, error } = await supabase
+                .from('enrollments')
+                .select('course_id, progress, status')
+                .eq('user_id', currentUser.id);
+            
+            if (error) throw error;
+            
+            userEnrollments = enrollments || [];
+            return userEnrollments;
+        } catch (error) {
+            console.error('Error loading enrollments:', error);
+            return [];
+        }
+    }
+    
+    async function enrollInCourse(courseId, courseType) {
+        if (!currentUser) {
+            showToast('Please login to enroll', true);
+            window.location.href = '/login.html';
+            return false;
+        }
+        
+        try {
+            if (courseType === 'free') {
+                const { error } = await supabase
+                    .from('enrollments')
+                    .insert({
+                        user_id: currentUser.id,
+                        course_id: courseId,
+                        progress: 0,
+                        status: 'active',
+                        enrolled_at: new Date()
+                    });
+                
+                if (error) {
+                    if (error.code === '23505') {
+                        showToast('Already enrolled in this course');
+                    } else {
+                        showToast('Enrollment failed', true);
+                    }
+                    return false;
+                }
+                
+                showToast('Successfully enrolled!');
+                await loadUserEnrollments();
+                displayDashboard();
+                return true;
+            } else {
+                showToast('Payment gateway coming soon for premium courses');
+                return false;
+            }
+        } catch (error) {
+            showToast('Enrollment failed', true);
+            return false;
+        }
+    }
+    
+    function displayDashboard() {
+        const container = document.getElementById('coursesContainer');
+        
+        // Calculate stats
+        const enrolledCourseIds = userEnrollments.map(e => e.course_id);
+        const enrolledCount = enrolledCourseIds.length;
+        const totalProgress = userEnrollments.reduce((sum, e) => sum + (e.progress || 0), 0);
+        const avgProgress = enrolledCount > 0 ? Math.round(totalProgress / enrolledCount) : 0;
+        
+        document.getElementById('coursesEnrolled').textContent = enrolledCount;
+        document.getElementById('avgProgress').textContent = `${avgProgress}%`;
+        
+        if (enrolledCount === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-book-open" style="font-size: 3rem; color: var(--neon-green);"></i>
+                    <h3>No Courses Enrolled Yet</h3>
+                    <p>Browse our courses and start your learning journey today!</p>
+                    <button class="btn-continue" style="width: auto; padding: 10px 30px;" onclick="location.href='/#courses'">
+                        Browse Courses →
+                    </button>
+                </div>
+            `;
+            return;
+        }
+        
+        // Display enrolled courses with real progress
+        const enrolledCourses = allCourses.filter(course => enrolledCourseIds.includes(course.id));
+        
+        container.innerHTML = enrolledCourses.map(course => {
+            const enrollment = userEnrollments.find(e => e.course_id === course.id);
+            const progress = enrollment?.progress || 0;
+            
+            return `
+                <div class="course-card">
+                    <div class="course-icon">${course.icon}</div>
+                    <h3>${course.title}</h3>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: ${progress}%"></div>
+                    </div>
+                    <p style="margin: 0.5rem 0; color: var(--soft-gray);">${progress}% Complete</p>
+                    <button class="btn-continue" onclick="location.href='/materials-display.html?id=${course.id}'">
+                        ${progress > 0 ? 'Continue Learning →' : 'Start Course →'}
+                    </button>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    async function logout() {
+        await supabase.auth.signOut();
+        window.location.href = '/';
+    }
+    
+    document.getElementById('logoutBtn').addEventListener('click', logout);
+    
+    async function init() {
+        await checkAuth();
+        await loadUserEnrollments();
+        displayDashboard();
+    }
+    
+    init();
+</script>
+</body>
+</html>
