@@ -25,7 +25,6 @@
     <!-- Canonical URL -->
     <link rel="canonical" href="https://meidriveafrica.com">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%2300FF88'/%3E%3Ctext x='50' y='70' font-size='60' text-anchor='middle' fill='%23041B3D'%3E🚗%3C/text%3E%3C/svg%3E">
-    <link rel="manifest" href="/manifest.json">
     
     <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
@@ -42,7 +41,8 @@
         "name": "MEI DRIVE AFRICA",
         "description": "NTSA-approved driver training courses in Kenya",
         "url": "https://meidriveafrica.com",
-        "address": { "@type": "PostalAddress", "addressCountry": "KE", "addressLocality": "Nairobi" }
+        "address": { "@type": "PostalAddress", "addressCountry": "KE", "addressLocality": "Nairobi" },
+        "instructor": { "@type": "Person", "name": "NTSA Certified Instructor", "identifier": "ILR-7WA1P62" }
     }
     </script>
     
@@ -59,6 +59,7 @@
             --soft-gray: #B7C4D6;
             --error: #ff4444;
             --warning: #ff9800;
+            --whatsapp: #25D366;
             --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
             --shadow-md: 0 5px 20px rgba(0,0,0,0.15);
             --shadow-lg: 0 10px 40px rgba(0,0,0,0.2);
@@ -97,6 +98,59 @@
         }
         .toast.error { border-left-color: var(--error); }
         .toast.show { transform: translateX(0); }
+        
+        /* Floating WhatsApp Button */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: var(--whatsapp);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            transition: var(--transition);
+            animation: pulse 2s infinite;
+            text-decoration: none;
+        }
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6);
+        }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4); }
+            50% { box-shadow: 0 4px 25px rgba(37, 211, 102, 0.8); }
+        }
+        
+        /* WhatsApp Tab (Desktop Side Tab) */
+        .whatsapp-tab {
+            position: fixed;
+            left: -120px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--whatsapp);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 0 30px 30px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            z-index: 999;
+            transition: left 0.3s ease;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: var(--shadow-md);
+        }
+        .whatsapp-tab:hover { left: 0; }
+        .whatsapp-tab i { font-size: 1.5rem; }
         
         /* Navbar */
         .navbar {
@@ -166,6 +220,20 @@
             transition: var(--transition);
         }
         .logout-btn:hover { background: var(--error); color: var(--white); }
+        
+        /* NTSA Instructor Badge */
+        .ntsa-badge {
+            background: linear-gradient(135deg, var(--dark-navy), var(--secondary-dark));
+            border: 1px solid var(--neon-green);
+            border-radius: 40px;
+            padding: 6px 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            margin-left: 1rem;
+        }
+        .ntsa-badge i { color: var(--neon-green); }
         
         /* Mobile Menu */
         .mobile-menu-btn { display: none; font-size: 1.5rem; color: var(--white); cursor: pointer; background: none; border: none; padding: 8px; }
@@ -409,6 +477,61 @@
         }
         .btn-view:hover { background: var(--neon-green); color: var(--dark-navy); }
         
+        /* Contact Section */
+        .contact-section {
+            background: var(--dark-navy);
+            padding: 4rem 2rem;
+            margin-top: 2rem;
+        }
+        .contact-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+        .contact-card {
+            background: var(--secondary-dark);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: var(--transition);
+            border: 1px solid rgba(0, 255, 136, 0.1);
+        }
+        .contact-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--neon-green);
+        }
+        .contact-card i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .contact-card.whatsapp i { color: var(--whatsapp); }
+        .contact-card.call i { color: var(--neon-green); }
+        .contact-card.email i { color: var(--warning); }
+        .contact-card h3 { margin-bottom: 0.5rem; }
+        .contact-card p { color: var(--soft-gray); margin-bottom: 1rem; }
+        .contact-btn {
+            display: inline-block;
+            padding: 10px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        .contact-btn.whatsapp-btn {
+            background: var(--whatsapp);
+            color: white;
+        }
+        .contact-btn.call-btn {
+            background: var(--neon-green);
+            color: var(--dark-navy);
+        }
+        .contact-btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+        
         /* Responsive Course Grid */
         @media (max-width: 1024px) {
             .courses-grid { grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
@@ -429,6 +552,8 @@
             .stats-container { margin: 0 20px; flex-direction: column; gap: 1.5rem; }
             .hero-buttons { flex-direction: column; align-items: center; }
             .toast { bottom: 20px; right: 20px; left: 20px; max-width: calc(100% - 40px); }
+            .whatsapp-tab { display: none; }
+            .whatsapp-float { bottom: 20px; left: 20px; width: 50px; height: 50px; font-size: 1.5rem; }
         }
         @media (max-width: 480px) {
             .courses-grid { grid-template-columns: 1fr; }
@@ -486,7 +611,12 @@
             padding: 2rem;
             color: var(--soft-gray);
             border-top: 1px solid rgba(0,255,136,0.1);
-            margin-top: 2rem;
+        }
+        
+        .instructor-credit {
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            color: var(--neon-green);
         }
         
         @media (max-width: 768px) {
@@ -508,6 +638,19 @@
 <!-- Toast -->
 <div id="toast" class="toast"></div>
 
+<!-- Floating WhatsApp Button (Mobile) -->
+<a href="https://wa.me/254703738707?text=Hello%21%20I%27m%20interested%20in%20your%20driving%20courses%20at%20MEI%20DRIVE%20AFRICA" 
+   class="whatsapp-float" target="_blank">
+    <i class="fab fa-whatsapp"></i>
+</a>
+
+<!-- WhatsApp Side Tab (Desktop) -->
+<a href="https://wa.me/254703738707?text=Hello%21%20I%27m%20interested%20in%20your%20driving%20courses%20at%20MEI%20DRIVE%20AFRICA" 
+   class="whatsapp-tab" target="_blank">
+    <i class="fab fa-whatsapp"></i>
+    <span>Chat on WhatsApp</span>
+</a>
+
 <!-- NAVBAR -->
 <nav class="navbar">
     <div class="nav-container">
@@ -515,6 +658,11 @@
         <div class="nav-links">
             <a href="#">Home</a>
             <a href="#courses">Courses</a>
+            <a href="#contact">Contact</a>
+            <div class="ntsa-badge">
+                <i class="fas fa-id-card"></i>
+                <span>NTSA Instructor: ILR-7WA1P62</span>
+            </div>
             <div id="authLinks">
                 <button class="nav-btn" id="loginBtnNav">Login</button>
                 <button class="nav-btn" id="registerBtnNav">Register</button>
@@ -538,6 +686,10 @@
     <div class="mobile-nav-links">
         <a href="#">Home</a>
         <a href="#courses">Courses</a>
+        <a href="#contact">Contact</a>
+        <div style="padding: 10px; font-size: 0.8rem; background: rgba(0,255,136,0.1); border-radius: 10px; margin: 10px 0;">
+            <i class="fas fa-id-card"></i> NTSA: ILR-7WA1P62
+        </div>
         <div id="mobileAuthLinks">
             <a href="#" id="mobileLoginBtn">Login</a>
             <a href="#" id="mobileRegisterBtn">Register</a>
@@ -578,13 +730,51 @@
     </div>
 </section>
 
+<!-- CONTACT SECTION -->
+<section class="contact-section" id="contact">
+    <h2 class="section-title">Get In <span>Touch</span></h2>
+    <div class="contact-grid">
+        <div class="contact-card whatsapp">
+            <i class="fab fa-whatsapp"></i>
+            <h3>WhatsApp</h3>
+            <p>Fastest response - Chat with us</p>
+            <p><strong>0703 738 707</strong></p>
+            <a href="https://wa.me/254703738707?text=Hello%21%20I%27m%20interested%20in%20your%20driving%20courses" 
+               class="contact-btn whatsapp-btn" target="_blank">
+                <i class="fab fa-whatsapp"></i> Chat Now
+            </a>
+        </div>
+        <div class="contact-card call">
+            <i class="fas fa-phone-alt"></i>
+            <h3>Call Us</h3>
+            <p>Mon-Sat: 8am - 6pm</p>
+            <p><strong>0703 738 707</strong></p>
+            <a href="tel:+254703738707" class="contact-btn call-btn">
+                <i class="fas fa-phone"></i> Call Now
+            </a>
+        </div>
+        <div class="contact-card email">
+            <i class="fas fa-envelope"></i>
+            <h3>Email Us</h3>
+            <p>We'll respond within 24hrs</p>
+            <p><strong>info@meidriveafrica.com</strong></p>
+            <a href="mailto:info@meidriveafrica.com" class="contact-btn call-btn">
+                <i class="fas fa-envelope"></i> Send Email
+            </a>
+        </div>
+    </div>
+</section>
+
 <footer>
     <p>&copy; 2026 MEI DRIVE AFRICA | NTSA Approved Driver Training</p>
+    <p class="instructor-credit">
+        <i class="fas fa-certificate"></i> NTSA Certified Instructor: ILR-7WA1P62
+    </p>
     <p style="margin-top: 0.5rem; font-size: 0.8rem;"><i class="fas fa-shield-alt"></i> Kenya's Premier Driving School</p>
 </footer>
 
 <script>
-    // Direct Supabase initialization (non-module for compatibility)
+    // Supabase Configuration
     const SUPABASE_URL = 'https://jeksrwrzzrczamxijvwl.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impla3Nyd3J6enJjemFteGlqdndsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NzYyMjAsImV4cCI6MjA5NDI1MjIyMH0.1poYpJKNFEVe2NTBkXBTH2bIHGk2yT8aqCU-OlJc4vs';
     
@@ -653,7 +843,7 @@
             const icons = ['🚗', '🚌', '🚸', '⚡', '🛵', '🚛', '📚', '📝'];
             
             courses.forEach((course, index) => {
-                const isFree = course.type === 'free';
+                const isFree = course.type === 'free' || course.price === 0;
                 const title = course.name || course.title;
                 const desc = course.description || 'Professional driver training course';
                 const price = course.price || 0;
@@ -661,11 +851,18 @@
                 
                 const card = document.createElement('div');
                 card.className = 'course-card';
-                card.onclick = () => window.location.href = `/course.html?id=${course.id}`;
+                card.onclick = () => {
+                    if (currentUser) {
+                        window.location.href = `/course.html?id=${course.id}`;
+                    } else {
+                        showToast('Please login to view course details', true);
+                        window.location.href = '/login.html';
+                    }
+                };
                 
                 card.innerHTML = `
                     <div class="course-icon">${icon}</div>
-                    ${!isFree ? '<div class="course-badge">PREMIUM</div>' : ''}
+                    ${!isFree ? '<div class="course-badge">PREMIUM</div>' : '<div class="course-badge" style="background:#ff9800;">FREE</div>'}
                     <h3>${escapeHtml(title)}</h3>
                     <p>${escapeHtml(desc.substring(0, 80))}...</p>
                     <div class="course-price ${isFree ? 'free' : 'premium'}">${isFree ? 'FREE' : `KES ${price.toLocaleString()}`}</div>
@@ -677,18 +874,18 @@
         
         function displayFallbackCourses() {
             const fallbackCourses = [
-                { id: 1, name: 'Learner Hub', description: 'Complete NTSA-approved driver training', type: 'premium', price: 5000, icon: '🚗' },
-                { id: 2, name: 'PSV Training', description: 'Specialized training for bus/taxi drivers', type: 'premium', price: 7500, icon: '🚌' },
-                { id: 3, name: 'School Bus/Van', description: 'Safety training for school transport', type: 'premium', price: 6500, icon: '🚸' },
-                { id: 4, name: 'EV Vehicle Course', description: 'Master electric vehicle driving', type: 'premium', price: 8000, icon: '⚡' },
-                { id: 5, name: 'Boda Boda', description: 'Professional motorcycle taxi training', type: 'premium', price: 5500, icon: '🛵' },
+                { id: 1, name: 'Learner Hub', description: 'Complete NTSA-approved driver training with certified instructors', type: 'premium', price: 5000, icon: '🚗' },
+                { id: 2, name: 'PSV Training', description: 'Specialized training for bus/taxi drivers - NTSA compliant', type: 'premium', price: 7500, icon: '🚌' },
+                { id: 3, name: 'School Bus/Van', description: 'Safety training for school transport with certification', type: 'premium', price: 6500, icon: '🚸' },
+                { id: 4, name: 'EV Vehicle Course', description: 'Master electric vehicle driving and maintenance', type: 'premium', price: 8000, icon: '⚡' },
+                { id: 5, name: 'Boda Boda', description: 'Professional motorcycle taxi training with NTSA approval', type: 'premium', price: 5500, icon: '🛵' },
                 { id: 6, name: 'Professional Driver', description: 'Advanced training for experienced drivers', type: 'premium', price: 7000, icon: '🚛' },
-                { id: 7, name: 'e-Safety Library', description: 'Free road safety resources', type: 'free', price: 0, icon: '📚' },
-                { id: 8, name: 'Quiz Bank', description: '1000+ NTSA practice questions', type: 'premium', price: 3000, icon: '📝' }
+                { id: 7, name: 'e-Safety Library', description: 'Free road safety resources and e-learning materials', type: 'free', price: 0, icon: '📚' },
+                { id: 8, name: 'Quiz Bank', description: '1000+ NTSA practice questions with explanations', type: 'premium', price: 3000, icon: '📝' }
             ];
             totalCoursesSpan.textContent = '8';
             displayCourses(fallbackCourses);
-            showToast('Using demo courses (RLS policy needed for live data)', true);
+            showToast('Demo courses loaded. Connect Supabase for live updates.', false);
         }
         
         async function loadCourses() {
@@ -702,6 +899,7 @@
             `;
             
             try {
+                // Try to fetch from Supabase courses table
                 const { data, error } = await supabase
                     .from('courses')
                     .select('id, name, description, type, price, icon, duration, level')
@@ -711,12 +909,13 @@
                 if (error) {
                     console.error('Supabase error:', error);
                     if (error.message.includes('row-level security') || error.message.includes('permission')) {
-                        showToast('RLS policy missing. Using demo courses.', true);
+                        showToast('RLS policy needs configuration. Using demo courses.', true);
                     }
                     displayFallbackCourses();
                 } else if (data && data.length > 0) {
                     totalCoursesSpan.textContent = data.length.toString();
                     displayCourses(data);
+                    showToast(`✅ Loaded ${data.length} courses from database!`, false);
                 } else {
                     displayFallbackCourses();
                 }
