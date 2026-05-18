@@ -36,14 +36,8 @@
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .logo {
-            font-size: 48px;
-            margin-bottom: 20px;
-        }
-        h2 {
-            color: #00FF88;
-            margin-bottom: 10px;
-        }
+        .logo { font-size: 48px; margin-bottom: 20px; }
+        h2 { color: #00FF88; margin-bottom: 10px; }
         .admin-badge {
             background: #00FF88;
             color: #0f3460;
@@ -131,14 +125,6 @@
         .back-home:hover {
             color: #00FF88;
         }
-        .demo-info {
-            margin-top: 20px;
-            padding: 12px;
-            background: rgba(0,255,136,0.1);
-            border-radius: 8px;
-            font-size: 12px;
-            color: #B7C4D6;
-        }
         @media (max-width: 480px) {
             .login-container { padding: 30px 20px; }
         }
@@ -168,12 +154,6 @@
         
         <div>
             <a href="/" class="back-home">← Back to Home</a>
-        </div>
-        
-        <div class="demo-info">
-            <strong>📝 Demo Admin:</strong><br>
-            Email: admin@meidriveafrica.com<br>
-            Password: Admin@2026
         </div>
     </div>
 
@@ -224,7 +204,6 @@
             setLoading(true);
             
             try {
-                // First, login with Supabase
                 const { data, error } = await supabase.auth.signInWithPassword({
                     email: email,
                     password: password
@@ -237,32 +216,24 @@
                 }
                 
                 if (data.user) {
-                    // Check if user has admin role
                     const { data: profile, error: profileError } = await supabase
                         .from('profiles')
-                        .select('role')
+                        .select('role, full_name')
                         .eq('id', data.user.id)
                         .single();
                     
-                    if (profileError) {
+                    if (profileError || profile?.role !== 'admin') {
                         setLoading(false);
-                        showError('Error checking admin status');
+                        showError('Unauthorized access. Admin privileges required.');
                         await supabase.auth.signOut();
                         return;
                     }
                     
-                    if (profile?.role === 'admin') {
-                        // Store admin session
-                        localStorage.setItem('adminToken', data.session.access_token);
-                        localStorage.setItem('adminEmail', email);
-                        
-                        // Redirect to admin dashboard
-                        window.location.href = '/admin-dashboard.html';
-                    } else {
-                        setLoading(false);
-                        showError('You are not authorized as an administrator');
-                        await supabase.auth.signOut();
-                    }
+                    localStorage.setItem('adminToken', data.session.access_token);
+                    localStorage.setItem('adminEmail', email);
+                    localStorage.setItem('adminName', profile?.full_name || 'Administrator');
+                    
+                    window.location.href = '/admin-dashboard.html';
                 }
             } catch (err) {
                 setLoading(false);
@@ -271,25 +242,20 @@
             }
         });
         
-        // Add demo credentials for testing
-        emailInput.value = 'admin@meidriveafrica.com';
-        passwordInput.value = 'Admin@2026';
-        
-        // Check if already logged in as admin
+        // Check existing session
         const adminToken = localStorage.getItem('adminToken');
         if (adminToken) {
-            // Verify token is still valid
             supabase.auth.getUser(adminToken).then(({ data, error }) => {
                 if (!error && data.user) {
                     window.location.href = '/admin-dashboard.html';
                 } else {
                     localStorage.removeItem('adminToken');
                     localStorage.removeItem('adminEmail');
+                    localStorage.removeItem('adminName');
                 }
             });
         }
         
-        // Add enter key support
         passwordInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 form.dispatchEvent(new Event('submit'));
