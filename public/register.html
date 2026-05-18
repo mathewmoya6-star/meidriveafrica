@@ -1,222 +1,475 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - MEI Drive Africa</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register | MEI DRIVE AFRICA</title>
+
+    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
         }
-        .register-container {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            width: 100%;
-            max-width: 450px;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+
+        :root{
+            --primary:#041B3D;
+            --secondary:#0A234F;
+            --accent:#00FF88;
+            --white:#ffffff;
+            --gray:#B7C4D6;
+            --danger:#ff4444;
         }
-        .logo { font-size: 48px; margin-bottom: 20px; }
-        h2 { color: #041B3D; margin-bottom: 10px; }
-        .subtitle { color: #666; margin-bottom: 30px; }
-        .input-group { margin-bottom: 20px; text-align: left; }
-        .input-group label { display: block; margin-bottom: 8px; color: #555; font-weight: 500; }
-        .input-group input {
-            width: 100%; padding: 12px; border: 2px solid #e0e0e0;
-            border-radius: 12px; font-size: 16px;
+
+        body{
+            font-family:'Segoe UI',sans-serif;
+            min-height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            padding:20px;
+            background:
+                linear-gradient(rgba(4,27,61,.88), rgba(10,35,79,.92)),
+                url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1600&auto=format&fit=crop')
+                center/cover;
         }
-        .input-group input:focus {
-            outline: none; border-color: #00FF88;
+
+        .register-box{
+            width:100%;
+            max-width:450px;
+            background:rgba(4,27,61,.96);
+            border:1px solid rgba(0,255,136,.15);
+            border-radius:24px;
+            padding:40px 30px;
+            box-shadow:0 10px 40px rgba(0,0,0,.3);
+            backdrop-filter:blur(8px);
         }
-        button {
-            width: 100%; padding: 14px; background: #00FF88; color: #041B3D;
-            border: none; border-radius: 12px; font-weight: bold; cursor: pointer;
-            font-size: 16px;
+
+        .logo{
+            text-align:center;
+            font-size:52px;
+            margin-bottom:10px;
         }
-        button:hover { transform: translateY(-2px); }
-        .error {
-            color: #e74c3c; margin-top: 10px; background: #fde8e8;
-            padding: 10px; border-radius: 8px; display: none;
+
+        h1{
+            text-align:center;
+            color:var(--white);
+            margin-bottom:8px;
+            font-size:2rem;
         }
-        .success {
-            color: #27ae60; margin-top: 10px; background: #d5f4e6;
-            padding: 10px; border-radius: 8px; display: none;
+
+        .subtitle{
+            text-align:center;
+            color:var(--gray);
+            margin-bottom:30px;
+            font-size:.95rem;
         }
-        .spinner {
-            display: none; width: 24px; height: 24px;
-            border: 2px solid #041B3D; border-top-color: #00FF88;
-            border-radius: 50%; animation: spin 0.8s linear infinite;
-            margin: 10px auto 0;
+
+        .input-group{
+            margin-bottom:18px;
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .auth-switch { margin-top: 20px; color: #666; }
-        .auth-switch a { color: #00FF88; text-decoration: none; }
-        .back-home { margin-top: 20px; display: inline-block; color: #666; text-decoration: none; }
-        @media (max-width: 480px) { .register-container { padding: 30px 20px; } }
+
+        .input-group label{
+            display:block;
+            color:var(--white);
+            margin-bottom:8px;
+            font-size:.92rem;
+            font-weight:600;
+        }
+
+        .input-group input{
+            width:100%;
+            padding:14px;
+            border-radius:14px;
+            border:2px solid transparent;
+            background:rgba(255,255,255,.08);
+            color:var(--white);
+            font-size:15px;
+            transition:.3s;
+        }
+
+        .input-group input:focus{
+            outline:none;
+            border-color:var(--accent);
+        }
+
+        .input-group input::placeholder{
+            color:#9fb0c5;
+        }
+
+        .password-note{
+            font-size:.75rem;
+            color:var(--gray);
+            margin-top:6px;
+        }
+
+        .btn{
+            width:100%;
+            padding:14px;
+            border:none;
+            border-radius:14px;
+            background:var(--accent);
+            color:var(--primary);
+            font-size:1rem;
+            font-weight:700;
+            cursor:pointer;
+            transition:.3s;
+        }
+
+        .btn:hover{
+            transform:translateY(-2px);
+            box-shadow:0 10px 30px rgba(0,255,136,.3);
+        }
+
+        .btn:disabled{
+            opacity:.6;
+            cursor:not-allowed;
+        }
+
+        .message{
+            margin-bottom:20px;
+            padding:12px;
+            border-radius:12px;
+            display:none;
+            font-size:.9rem;
+        }
+
+        .error{
+            background:rgba(255,68,68,.12);
+            color:#ffb3b3;
+            border:1px solid rgba(255,68,68,.3);
+        }
+
+        .success{
+            background:rgba(0,255,136,.12);
+            color:#9dffd1;
+            border:1px solid rgba(0,255,136,.3);
+        }
+
+        .spinner{
+            width:24px;
+            height:24px;
+            border:3px solid rgba(255,255,255,.2);
+            border-top-color:var(--accent);
+            border-radius:50%;
+            animation:spin .8s linear infinite;
+            margin:20px auto 0;
+            display:none;
+        }
+
+        @keyframes spin{
+            to{
+                transform:rotate(360deg);
+            }
+        }
+
+        .links{
+            margin-top:25px;
+            text-align:center;
+            color:var(--gray);
+            font-size:.92rem;
+        }
+
+        .links a{
+            color:var(--accent);
+            text-decoration:none;
+            font-weight:600;
+        }
+
+        .back-home{
+            display:block;
+            margin-top:18px;
+        }
+
+        @media(max-width:480px){
+            .register-box{
+                padding:30px 20px;
+            }
+        }
     </style>
 </head>
+
 <body>
-    <div class="register-container">
-        <div class="logo">🚗</div>
-        <h2>Create Account</h2>
-        <p class="subtitle">Join MEI Drive Africa today</p>
-        
-        <div id="error" class="error"></div>
-        <div id="success" class="success"></div>
-        
-        <form id="registerForm">
-            <div class="input-group">
-                <label><i class="fas fa-user"></i> Full Name</label>
-                <input type="text" id="fullName" placeholder="Enter your full name" required>
-            </div>
-            <div class="input-group">
-                <label><i class="fas fa-envelope"></i> Email Address</label>
-                <input type="email" id="email" placeholder="Enter your email" required>
-            </div>
-            <div class="input-group">
-                <label><i class="fas fa-lock"></i> Password</label>
-                <input type="password" id="password" placeholder="Create a password" required>
-                <div style="font-size: 12px; color: #999; margin-top: 5px;">Password must be at least 6 characters</div>
-            </div>
-            <div class="input-group">
-                <label><i class="fas fa-check-circle"></i> Confirm Password</label>
-                <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
-            </div>
-            <button type="submit" id="registerBtn">Create Account</button>
-        </form>
-        
-        <div id="loadingSpinner" class="spinner"></div>
-        
-        <div class="auth-switch">
-            Already have an account? <a href="/login.html">Login</a>
+
+<div class="register-box">
+
+    <div class="logo">🚗</div>
+
+    <h1>Create Account</h1>
+
+    <p class="subtitle">
+        Join MEI DRIVE AFRICA today
+    </p>
+
+    <div id="errorBox" class="message error"></div>
+    <div id="successBox" class="message success"></div>
+
+    <form id="registerForm">
+
+        <div class="input-group">
+            <label>
+                <i class="fas fa-user"></i>
+                Full Name
+            </label>
+
+            <input
+                type="text"
+                id="fullName"
+                placeholder="Enter full name"
+                required
+            >
         </div>
-        <div>
-            <a href="/" class="back-home">← Back to Home</a>
+
+        <div class="input-group">
+            <label>
+                <i class="fas fa-envelope"></i>
+                Email Address
+            </label>
+
+            <input
+                type="email"
+                id="email"
+                placeholder="Enter email address"
+                required
+            >
         </div>
+
+        <div class="input-group">
+            <label>
+                <i class="fas fa-lock"></i>
+                Password
+            </label>
+
+            <input
+                type="password"
+                id="password"
+                placeholder="Create password"
+                required
+            >
+
+            <div class="password-note">
+                Password must be at least 6 characters
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>
+                <i class="fas fa-check-circle"></i>
+                Confirm Password
+            </label>
+
+            <input
+                type="password"
+                id="confirmPassword"
+                placeholder="Confirm password"
+                required
+            >
+        </div>
+
+        <button type="submit" class="btn" id="registerBtn">
+            Create Account
+        </button>
+
+    </form>
+
+    <div class="spinner" id="spinner"></div>
+
+    <div class="links">
+        Already have an account?
+        <a href="/login.html">Login</a>
+
+        <a href="/" class="back-home">
+            ← Back Home
+        </a>
     </div>
 
-    <script>
-        const SUPABASE_URL = 'https://jeksrwrzzrczamxijvwl.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impla3Nyd3J6enJjemFteGlqdndsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NzYyMjAsImV4cCI6MjA5NDI1MjIyMH0.1poYpJKNFEVe2NTBkXBTH2bIHGk2yT8aqCU-OlJc4vs';
-        
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        
-        const form = document.getElementById('registerForm');
-        const fullNameInput = document.getElementById('fullName');
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
-        const confirmPasswordInput = document.getElementById('confirmPassword');
-        const registerBtn = document.getElementById('registerBtn');
-        const errorDiv = document.getElementById('error');
-        const successDiv = document.getElementById('success');
-        const loadingSpinner = document.getElementById('loadingSpinner');
-        
-        function showError(message) {
-            errorDiv.textContent = message;
-            errorDiv.style.display = 'block';
-            successDiv.style.display = 'none';
-            setTimeout(() => errorDiv.style.display = 'none', 5000);
+</div>
+
+<script>
+
+    // SUPABASE CONFIG
+    const SUPABASE_URL =
+        'https://jeksrwrzzrczamxijvwl.supabase.co';
+
+    const SUPABASE_ANON_KEY =
+        'YOUR_SUPABASE_ANON_KEY';
+
+    const { createClient } = window.supabase;
+
+    const supabase =
+        createClient(
+            SUPABASE_URL,
+            SUPABASE_ANON_KEY
+        );
+
+    // ELEMENTS
+    const form = document.getElementById('registerForm');
+
+    const fullName =
+        document.getElementById('fullName');
+
+    const email =
+        document.getElementById('email');
+
+    const password =
+        document.getElementById('password');
+
+    const confirmPassword =
+        document.getElementById('confirmPassword');
+
+    const registerBtn =
+        document.getElementById('registerBtn');
+
+    const spinner =
+        document.getElementById('spinner');
+
+    const errorBox =
+        document.getElementById('errorBox');
+
+    const successBox =
+        document.getElementById('successBox');
+
+    // HELPERS
+    function showError(message){
+        errorBox.style.display = 'block';
+        successBox.style.display = 'none';
+        errorBox.textContent = message;
+    }
+
+    function showSuccess(message){
+        successBox.style.display = 'block';
+        errorBox.style.display = 'none';
+        successBox.textContent = message;
+    }
+
+    function setLoading(state){
+        spinner.style.display = state ? 'block' : 'none';
+        registerBtn.disabled = state;
+    }
+
+    // REGISTER
+    form.addEventListener('submit', async (e) => {
+
+        e.preventDefault();
+
+        const fullNameValue =
+            fullName.value.trim();
+
+        const emailValue =
+            email.value.trim();
+
+        const passwordValue =
+            password.value;
+
+        const confirmPasswordValue =
+            confirmPassword.value;
+
+        errorBox.style.display = 'none';
+        successBox.style.display = 'none';
+
+        // VALIDATION
+        if(
+            !fullNameValue ||
+            !emailValue ||
+            !passwordValue ||
+            !confirmPasswordValue
+        ){
+            return showError(
+                'Please fill all fields'
+            );
         }
-        
-        function showSuccess(message) {
-            successDiv.textContent = message;
-            successDiv.style.display = 'block';
-            errorDiv.style.display = 'none';
+
+        if(passwordValue.length < 6){
+            return showError(
+                'Password must be at least 6 characters'
+            );
         }
-        
-        function setLoading(loading) {
-            if (loading) {
-                loadingSpinner.style.display = 'block';
-                registerBtn.disabled = true;
-                registerBtn.style.opacity = '0.6';
-            } else {
-                loadingSpinner.style.display = 'none';
-                registerBtn.disabled = false;
-                registerBtn.style.opacity = '1';
-            }
+
+        if(passwordValue !== confirmPasswordValue){
+            return showError(
+                'Passwords do not match'
+            );
         }
-        
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const fullName = fullNameInput.value.trim();
-            const email = emailInput.value.trim();
-            const password = passwordInput.value;
-            const confirmPassword = confirmPasswordInput.value;
-            
-            errorDiv.style.display = 'none';
-            successDiv.style.display = 'none';
-            
-            if (!fullName || !email || !password || !confirmPassword) {
-                showError('Please fill in all fields');
-                return;
-            }
-            
-            if (password.length < 6) {
-                showError('Password must be at least 6 characters');
-                return;
-            }
-            
-            if (password !== confirmPassword) {
-                showError('Passwords do not match');
-                return;
-            }
-            
+
+        try{
+
             setLoading(true);
-            
-            try {
-                const { data, error } = await supabase.auth.signUp({
-                    email: email,
-                    password: password,
-                    options: {
-                        data: {
-                            full_name: fullName,
-                            role: 'learner'
-                        }
+
+            // SIGN UP USER
+            const { data, error } =
+                await supabase.auth.signUp({
+
+                    email: emailValue,
+
+                    password: passwordValue,
+
+                    options:{
+                        data:{
+                            full_name: fullNameValue,
+                            role:'learner'
+                        },
+
+                        emailRedirectTo:
+                            window.location.origin + '/login.html'
                     }
                 });
-                
+
+            if(error){
+
                 setLoading(false);
-                
-                if (error) {
-                    showError(error.message);
-                    return;
-                }
-                
-                if (data.user) {
-                    showSuccess('✅ Registration successful! Please check your email to confirm your account.');
-                    
-                    fullNameInput.value = '';
-                    emailInput.value = '';
-                    passwordInput.value = '';
-                    confirmPasswordInput.value = '';
-                    
-                    setTimeout(() => {
-                        window.location.href = '/login.html';
-                    }, 3000);
-                }
-            } catch (err) {
-                setLoading(false);
-                showError('Network error. Please try again.');
-                console.error('Registration error:', err);
+
+                return showError(error.message);
             }
-        });
-        
-        confirmPasswordInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                form.dispatchEvent(new Event('submit'));
+
+            // INSERT PROFILE
+            if(data.user){
+
+                const { error: profileError } =
+                    await supabase
+                        .from('profiles')
+                        .insert([{
+                            id:data.user.id,
+                            full_name:fullNameValue,
+                            email:emailValue,
+                            role:'learner'
+                        }]);
+
+                if(profileError){
+                    console.error(profileError);
+                }
+
+                showSuccess(
+                    'Registration successful! Please check your email.'
+                );
+
+                form.reset();
+
+                setTimeout(() => {
+                    window.location.href = '/login.html';
+                }, 3000);
             }
-        });
-    </script>
+
+        }catch(err){
+
+            console.error(err);
+
+            showError(
+                'Something went wrong. Try again.'
+            );
+
+        }finally{
+            setLoading(false);
+        }
+
+    });
+
+</script>
+
 </body>
 </html>
