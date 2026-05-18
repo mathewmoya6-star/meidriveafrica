@@ -1,180 +1,256 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login | MEI DRIVE AFRICA</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<title>Admin Login | MEI DRIVE AFRICA</title>
 
-    <style>
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-        }
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-        :root{
-            --primary:#041B3D;
-            --secondary:#0A234F;
-            --accent:#00FF88;
-            --white:#ffffff;
-            --gray:#B7C4D6;
-            --danger:#ff4444;
-        }
+<style>
 
-        body{
-            font-family:'Segoe UI',sans-serif;
-            min-height:100vh;
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            padding:20px;
-            background:
-                linear-gradient(rgba(4,27,61,.9), rgba(10,35,79,.92)),
-                url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1600&auto=format&fit=crop')
-                center/cover;
-        }
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-        .login-box{
-            width:100%;
-            max-width:420px;
-            background:rgba(4,27,61,.96);
-            border:1px solid rgba(0,255,136,.15);
-            border-radius:24px;
-            padding:40px 30px;
-            box-shadow:0 10px 40px rgba(0,0,0,.35);
-            backdrop-filter:blur(8px);
-        }
+:root{
+    --primary:#041B3D;
+    --secondary:#0A234F;
+    --accent:#00FF88;
+    --white:#ffffff;
+    --gray:#B7C4D6;
+    --danger:#ff4d4d;
+}
 
-        .logo{
-            font-size:54px;
-            text-align:center;
-            margin-bottom:10px;
-        }
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+    font-family:Segoe UI,sans-serif;
 
-        h1{
-            color:var(--accent);
-            text-align:center;
-            margin-bottom:10px;
-        }
+    background:
+    linear-gradient(rgba(4,27,61,.92),rgba(10,35,79,.92)),
+    url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1600&auto=format&fit=crop')
+    center/cover;
+}
 
-        .badge{
-            display:inline-block;
-            background:var(--accent);
-            color:var(--primary);
-            padding:6px 16px;
-            border-radius:30px;
-            font-size:.75rem;
-            font-weight:700;
-            margin:0 auto 30px;
-        }
+.login-card{
+    width:100%;
+    max-width:420px;
 
-        .badge-wrap{
-            text-align:center;
-        }
+    background:rgba(4,27,61,.96);
 
-        .input-group{
-            margin-bottom:18px;
-        }
+    border:1px solid rgba(0,255,136,.15);
 
-        .input-group label{
-            display:block;
-            margin-bottom:8px;
-            color:var(--white);
-            font-size:.92rem;
-            font-weight:600;
-        }
+    border-radius:24px;
 
-        .input-group input{
-            width:100%;
-            padding:14px;
-            border-radius:14px;
-            border:2px solid rgba(0,255,136,.15);
-            background:#08172e;
-            color:white;
-            font-size:15px;
-            transition:.3s;
-        }
+    padding:40px 30px;
 
-        .input-group input:focus{
-            outline:none;
-            border-color:var(--accent);
-        }
+    backdrop-filter:blur(10px);
 
-        .btn{
-            width:100%;
-            padding:14px;
-            border:none;
-            border-radius:14px;
-            background:var(--accent);
-            color:var(--primary);
-            font-weight:700;
-            font-size:1rem;
-            cursor:pointer;
-            transition:.3s;
-        }
+    box-shadow:0 10px 40px rgba(0,0,0,.4);
+}
 
-        .btn:hover{
-            transform:translateY(-2px);
-            box-shadow:0 10px 30px rgba(0,255,136,.3);
-        }
+.logo{
+    font-size:58px;
+    text-align:center;
+    margin-bottom:12px;
+}
 
-        .btn:disabled{
-            opacity:.6;
-            cursor:not-allowed;
-        }
+h1{
+    color:var(--accent);
+    text-align:center;
+    font-size:1.9rem;
+}
 
-        .message{
-            display:none;
-            margin-bottom:20px;
-            padding:12px;
-            border-radius:12px;
-            font-size:.9rem;
-        }
+.subtitle{
+    text-align:center;
+    color:var(--gray);
+    margin-top:8px;
+    margin-bottom:24px;
+}
 
-        .error{
-            background:rgba(255,68,68,.12);
-            color:#ffb3b3;
-            border:1px solid rgba(255,68,68,.3);
-        }
+.badge{
+    width:max-content;
+    margin:auto;
+    margin-bottom:30px;
 
-        .success{
-            background:rgba(0,255,136,.12);
-            color:#9dffd1;
-            border:1px solid rgba(0,255,136,.3);
-        }
+    background:var(--accent);
+    color:var(--primary);
 
-        .back{
-            display:block;
-            text-align:center;
-            margin-top:20px;
-            color:var(--gray);
-            text-decoration:none;
-        }
+    padding:7px 18px;
 
-        .back:hover{
-            color:var(--accent);
-        }
+    border-radius:30px;
 
-    </style>
+    font-size:.75rem;
+    font-weight:700;
+}
+
+.input-group{
+    margin-bottom:18px;
+}
+
+.input-group label{
+    display:block;
+    color:white;
+    margin-bottom:8px;
+    font-size:.92rem;
+    font-weight:600;
+}
+
+.input-group input{
+    width:100%;
+    padding:14px;
+
+    border-radius:14px;
+
+    border:2px solid rgba(0,255,136,.15);
+
+    background:#08172e;
+
+    color:white;
+
+    font-size:15px;
+
+    transition:.3s;
+}
+
+.input-group input:focus{
+    outline:none;
+    border-color:var(--accent);
+}
+
+.btn{
+    width:100%;
+
+    padding:14px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:var(--accent);
+
+    color:var(--primary);
+
+    font-size:1rem;
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:.3s;
+}
+
+.btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 30px rgba(0,255,136,.25);
+}
+
+.btn:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
+.message{
+    display:none;
+
+    padding:12px;
+
+    border-radius:12px;
+
+    margin-bottom:18px;
+
+    font-size:.9rem;
+}
+
+.error{
+    background:rgba(255,77,77,.12);
+    color:#ffb3b3;
+    border:1px solid rgba(255,77,77,.3);
+}
+
+.success{
+    background:rgba(0,255,136,.12);
+    color:#b7ffe1;
+    border:1px solid rgba(0,255,136,.3);
+}
+
+.back-link{
+    display:block;
+    margin-top:22px;
+    text-align:center;
+
+    color:var(--gray);
+
+    text-decoration:none;
+}
+
+.back-link:hover{
+    color:var(--accent);
+}
+
+.loader{
+    width:18px;
+    height:18px;
+
+    border:2px solid #041B3D;
+    border-top-color:white;
+
+    border-radius:50%;
+
+    display:inline-block;
+
+    animation:spin .7s linear infinite;
+
+    vertical-align:middle;
+
+    margin-right:8px;
+}
+
+@keyframes spin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+@media(max-width:480px){
+
+    .login-card{
+        padding:30px 22px;
+    }
+
+    h1{
+        font-size:1.5rem;
+    }
+
+}
+
+</style>
 </head>
 
 <body>
 
-<div class="login-box">
+<div class="login-card">
 
     <div class="logo">🚗</div>
 
     <h1>MEI DRIVE AFRICA</h1>
 
-    <div class="badge-wrap">
-        <div class="badge">
-            ADMINISTRATOR PANEL
-        </div>
+    <p class="subtitle">
+        Secure Administrator Access
+    </p>
+
+    <div class="badge">
+        ADMIN PANEL
     </div>
 
     <div id="errorBox" class="message error"></div>
+
     <div id="successBox" class="message success"></div>
 
     <form id="loginForm">
@@ -211,7 +287,7 @@
 
     </form>
 
-    <a href="/" class="back">
+    <a href="/" class="back-link">
         ← Back Home
     </a>
 
@@ -219,179 +295,172 @@
 
 <script>
 
-    // SUPABASE
-    const SUPABASE_URL =
-        'https://jeksrwrzzrczamxijvwl.supabase.co';
+const SUPABASE_URL =
+'https://jeksrwrzzrczamxijvwl.supabase.co';
 
-    const SUPABASE_ANON_KEY =
-        'YOUR_SUPABASE_ANON_KEY';
+const SUPABASE_ANON_KEY =
+'PASTE_YOUR_REAL_SUPABASE_ANON_KEY_HERE';
 
-    const { createClient } = window.supabase;
+const { createClient } = window.supabase;
 
-    const supabase =
-        createClient(
-            SUPABASE_URL,
-            SUPABASE_ANON_KEY
+const supabase =
+createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+);
+
+const form =
+document.getElementById('loginForm');
+
+const loginBtn =
+document.getElementById('loginBtn');
+
+const errorBox =
+document.getElementById('errorBox');
+
+const successBox =
+document.getElementById('successBox');
+
+function showError(message){
+
+    errorBox.style.display='block';
+    successBox.style.display='none';
+
+    errorBox.textContent=message;
+}
+
+function showSuccess(message){
+
+    successBox.style.display='block';
+    errorBox.style.display='none';
+
+    successBox.textContent=message;
+}
+
+function setLoading(state){
+
+    loginBtn.disabled=state;
+
+    loginBtn.innerHTML = state
+    ? '<span class="loader"></span>Logging in...'
+    : 'Login as Admin';
+}
+
+async function verifyAdmin(userId){
+
+    const { data, error } =
+    await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', userId)
+    .single();
+
+    if(error) return false;
+
+    return data?.role === 'admin';
+}
+
+async function checkExistingSession(){
+
+    const {
+        data:{ session }
+    } =
+    await supabase.auth.getSession();
+
+    if(!session) return;
+
+    const isAdmin =
+    await verifyAdmin(session.user.id);
+
+    if(isAdmin){
+
+        window.location.href =
+        '/admin-dashboard.html';
+    }
+}
+
+checkExistingSession();
+
+form.addEventListener('submit', async(e)=>{
+
+    e.preventDefault();
+
+    const email =
+    document.getElementById('email')
+    .value
+    .trim();
+
+    const password =
+    document.getElementById('password')
+    .value;
+
+    if(!email || !password){
+
+        return showError(
+            'Please enter email and password'
         );
-
-    // ELEMENTS
-    const form =
-        document.getElementById('loginForm');
-
-    const emailInput =
-        document.getElementById('email');
-
-    const passwordInput =
-        document.getElementById('password');
-
-    const loginBtn =
-        document.getElementById('loginBtn');
-
-    const errorBox =
-        document.getElementById('errorBox');
-
-    const successBox =
-        document.getElementById('successBox');
-
-    // HELPERS
-    function showError(message){
-        errorBox.style.display = 'block';
-        successBox.style.display = 'none';
-        errorBox.textContent = message;
     }
 
-    function showSuccess(message){
-        successBox.style.display = 'block';
-        errorBox.style.display = 'none';
-        successBox.textContent = message;
-    }
+    try{
 
-    function setLoading(state){
-        loginBtn.disabled = state;
-        loginBtn.textContent =
-            state
-            ? 'Logging in...'
-            : 'Login as Admin';
-    }
+        setLoading(true);
 
-    // CHECK EXISTING SESSION
-    async function checkSession(){
+        const { data, error } =
+        await supabase.auth.signInWithPassword({
+            email,
+            password
+        });
 
-        const {
-            data:{ session }
-        } = await supabase.auth.getSession();
-
-        if(!session) return;
-
-        const { data:profile } =
-            await supabase
-                .from('profiles')
-                .select('role')
-                .eq('id', session.user.id)
-                .single();
-
-        if(profile?.role === 'admin'){
-            window.location.href =
-                '/admin-dashboard.html';
-        }
-    }
-
-    checkSession();
-
-    // LOGIN
-    form.addEventListener('submit', async (e) => {
-
-        e.preventDefault();
-
-        const email =
-            emailInput.value.trim();
-
-        const password =
-            passwordInput.value;
-
-        if(!email || !password){
-            return showError(
-                'Please enter email and password'
-            );
-        }
-
-        try{
-
-            setLoading(true);
-
-            // LOGIN
-            const { data, error } =
-                await supabase.auth.signInWithPassword({
-                    email,
-                    password
-                });
-
-            if(error){
-
-                setLoading(false);
-
-                return showError(
-                    error.message
-                );
-            }
-
-            // VERIFY ADMIN
-            const { data:profile, error:profileError } =
-                await supabase
-                    .from('profiles')
-                    .select('role')
-                    .eq('id', data.user.id)
-                    .single();
-
-            if(profileError){
-
-                await supabase.auth.signOut();
-
-                setLoading(false);
-
-                return showError(
-                    'Failed to verify admin account'
-                );
-            }
-
-            // CHECK ROLE
-            if(profile?.role !== 'admin'){
-
-                await supabase.auth.signOut();
-
-                setLoading(false);
-
-                return showError(
-                    'Access denied'
-                );
-            }
-
-            showSuccess(
-                'Login successful. Redirecting...'
-            );
-
-            setTimeout(() => {
-
-                window.location.href =
-                    '/admin-dashboard.html';
-
-            }, 1200);
-
-        }catch(err){
-
-            console.error(err);
-
-            showError(
-                'Something went wrong'
-            );
-
-        }finally{
+        if(error){
 
             setLoading(false);
 
+            return showError(
+                error.message
+            );
         }
 
-    });
+        const isAdmin =
+        await verifyAdmin(
+            data.user.id
+        );
+
+        if(!isAdmin){
+
+            await supabase.auth.signOut();
+
+            setLoading(false);
+
+            return showError(
+                'Access denied. Admin only.'
+            );
+        }
+
+        showSuccess(
+            'Login successful. Redirecting...'
+        );
+
+        setTimeout(()=>{
+
+            window.location.href =
+            '/admin-dashboard.html';
+
+        },1200);
+
+    }catch(err){
+
+        console.error(err);
+
+        showError(
+            'Something went wrong'
+        );
+
+    }finally{
+
+        setLoading(false);
+    }
+
+});
 
 </script>
 
