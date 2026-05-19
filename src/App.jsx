@@ -1,48 +1,78 @@
-import React, { useEffect, useState } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { supabase } from './lib/supabase';
-import Navbar from './components/Navbar';
-import Home from './components/Home';
-import Login from './components/Login';
-import Register from './components/Register';
-import Dashboard from './components/Dashboard';
+import React, { useEffect, useState } from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import { supabase } from './lib/supabase'
+import Login from './pages/Login'
+import Register from './pages/Register'
+import Dashboard from './pages/Dashboard'
+import AdminDashboard from './pages/AdminDashboard'
+import Home from './pages/Home'
 
 function App() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [userRole, setUserRole] = useState(null)
 
   useEffect(() => {
-    // Check auth session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user || null);
-      setLoading(false);
-    });
+    // Get initial session
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      setUser(session?.user || null)
+      
+      if (session?.user) {
+        // Get user role from profiles
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', session.user.id)
+          .single()
+        setUserRole(profile?.role || 'user')
+      }
+      setLoading(false)
+    })
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user || null);
-    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      setUser(session?.user || null)
+      
+      if (session?.user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', session.user.id)
+          .single()
+        setUserRole(profile?.role || 'user')
+      } else {
+        setUserRole(null)
+      }
+    })
 
-    return () => subscription.unsubscribe();
-  }, []);
+    return () => subscription.unsubscribe()
+  }, [])
 
   if (loading) {
-    return <div className="flex justify-center items-center min-h-screen">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00FF88]"></div>
-    </div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0A234F] to-[#041B3D]">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#00FF88]"></div>
+      </div>
+    )
   }
 
   return (
-    <>
-      <Navbar user={user} />
-      <Routes>
-        <Route path="/" element={<Home user={user} />} />
-        <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
-        <Route path="/register" element={!user ? <Register /> : <Navigate to="/" />} />
-        <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/login" />} />
-      </Routes>
-    </>
-  );
+    <Routes>
+      {/* Public Routes */}
+      <Route path="/" element={<Home user={user} />} />
+      <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
+      <Route path="/register" element={!user ? <Register /> : <Navigate to="/" />} />
+      
+      {/* Protected Routes */}
+      <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/login" />} />
+      
+      {/* Admin Routes */}
+      <Route 
+        path="/admin" 
+        element={userRole === 'admin' ? <AdminDashboard /> : <Navigate to="/" />} 
+      />
+    </Routes>
+  )
 }
 
-export default App;
+export default App
