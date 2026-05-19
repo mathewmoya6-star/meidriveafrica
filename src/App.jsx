@@ -1,43 +1,40 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { ProtectedRoute } from './components/ProtectedRoute'
-import { Home } from './pages/Home'
-import { CourseDetails } from './pages/CourseDetails'
-import { AdminDashboard } from './pages/AdminDashboard'
-import { Login } from './pages/Login'
-import { Register } from './pages/Register'
-import { Profile } from './pages/Profile'
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import Navbar from './components/Navbar';
+import Login from './components/Login';
+import Register from './components/Register';
+import Dashboard from './components/Dashboard';
+import Home from './components/Home';
 
-function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        
-        {/* Protected Routes */}
-        <Route path="/course/:id" element={
-          <ProtectedRoute>
-            <CourseDetails />
-          </ProtectedRoute>
-        } />
-        
-        <Route path="/profile" element={
-          <ProtectedRoute>
-            <Profile />
-          </ProtectedRoute>
-        } />
-        
-        <Route path="/admin" element={
-          <ProtectedRoute requireAdmin={true}>
-            <AdminDashboard />
-          </ProtectedRoute>
-        } />
-        
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </BrowserRouter>
-  )
+function AppContent() {
+    const { user, loading } = useAuth();
+
+    if (loading) {
+        return <div className="loading">Loading...</div>;
+    }
+
+    return (
+        <>
+            <Navbar user={user} />
+            <Routes>
+                <Route path="/" element={<Home user={user} />} />
+                <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
+                <Route path="/register" element={!user ? <Register /> : <Navigate to="/" />} />
+                <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/login" />} />
+            </Routes>
+        </>
+    );
 }
 
-export default App
+function App() {
+    return (
+        <BrowserRouter>
+            <AuthProvider>
+                <AppContent />
+            </AuthProvider>
+        </BrowserRouter>
+    );
+}
+
+export default App;
