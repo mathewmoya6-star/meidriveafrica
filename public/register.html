@@ -55,6 +55,10 @@
             font-weight: 500;
         }
         
+        label .required {
+            color: #ff4444;
+        }
+        
         input {
             width: 100%;
             padding: 12px 15px;
@@ -70,6 +74,30 @@
             outline: none;
             border-color: #00FF88;
             background: rgba(10, 35, 79, 1);
+        }
+        
+        input.error {
+            border-color: #ff4444;
+        }
+        
+        input.success {
+            border-color: #00C851;
+        }
+        
+        .password-match {
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .password-match.match {
+            color: #00C851;
+            display: block;
+        }
+        
+        .password-match.not-match {
+            color: #ff4444;
+            display: block;
         }
         
         button {
@@ -108,11 +136,16 @@
             text-decoration: none;
         }
         
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        
         .message {
             margin-top: 15px;
             padding: 12px;
             border-radius: 8px;
             display: none;
+            font-size: 14px;
         }
         
         .message.success {
@@ -129,45 +162,88 @@
             display: block;
         }
         
+        .message.info {
+            background: rgba(0, 255, 136, 0.2);
+            border: 1px solid #00FF88;
+            color: #00FF88;
+            display: block;
+        }
+        
         .ntsa-badge {
             text-align: center;
             margin-top: 20px;
             font-size: 12px;
             color: #00FF88;
         }
+        
+        .requirements {
+            font-size: 12px;
+            color: #B7C4D6;
+            margin-top: 5px;
+        }
+        
+        .requirements ul {
+            margin-left: 20px;
+            margin-top: 5px;
+        }
+        
+        .requirements li {
+            margin-bottom: 3px;
+        }
+        
+        .requirements li.valid {
+            color: #00C851;
+        }
+        
+        .requirements li.invalid {
+            color: #ff4444;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🚗 MEI DRIVE AFRICA</h1>
-        <div class="subtitle">Create Your Account</div>
+        <div class="subtitle">Create Your Account to Start Learning</div>
         
         <form id="registerForm">
             <div class="form-group">
-                <label>Full Name</label>
+                <label>Full Name <span class="required">*</span></label>
                 <input type="text" id="fullName" required placeholder="John Doe">
             </div>
             
             <div class="form-group">
-                <label>Email Address</label>
+                <label>Email Address <span class="required">*</span></label>
                 <input type="email" id="email" required placeholder="john@example.com">
             </div>
             
             <div class="form-group">
                 <label>Phone Number</label>
                 <input type="tel" id="phone" placeholder="0712345678">
+                <div class="requirements">Format: 07XX XXX XXX (Kenyan number)</div>
             </div>
             
             <div class="form-group">
-                <label>Password</label>
+                <label>Password <span class="required">*</span></label>
                 <input type="password" id="password" required placeholder="Min 6 characters">
+                <div class="requirements">
+                    Password must:
+                    <ul>
+                        <li id="lengthReq">✓ Be at least 6 characters</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Confirm Password <span class="required">*</span></label>
+                <input type="password" id="confirmPassword" required placeholder="Type password again">
+                <div id="passwordMatchMsg" class="password-match"></div>
             </div>
             
             <button type="submit" id="registerBtn">Create Account</button>
         </form>
         
         <div class="login-link">
-            Already have an account? <a href="#" onclick="window.location.href='/'">Login</a>
+            Already have an account? <a href="#" onclick="window.location.href='/'">Login here</a>
         </div>
         
         <div class="ntsa-badge">
@@ -189,8 +265,11 @@
         const form = document.getElementById('registerForm');
         const registerBtn = document.getElementById('registerBtn');
         const messageDiv = document.getElementById('message');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const passwordMatchMsg = document.getElementById('passwordMatchMsg');
         
-        // Show message function
+        // Function to show message
         function showMessage(text, type) {
             messageDiv.textContent = text;
             messageDiv.className = `message ${type}`;
@@ -198,6 +277,100 @@
                 messageDiv.style.display = 'none';
             }, 5000);
         }
+        
+        // Password strength validation
+        function validatePassword() {
+            const password = passwordInput.value;
+            const lengthReq = document.getElementById('lengthReq');
+            
+            let isValid = true;
+            
+            // Check length
+            if (password.length >= 6) {
+                lengthReq.className = 'valid';
+                lengthReq.innerHTML = '✓ At least 6 characters';
+            } else {
+                lengthReq.className = 'invalid';
+                lengthReq.innerHTML = '✗ At least 6 characters';
+                isValid = false;
+            }
+            
+            return isValid && password.length >= 6;
+        }
+        
+        // Password match validation
+        function validatePasswordMatch() {
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+            
+            if (confirmPassword.length === 0) {
+                passwordMatchMsg.className = 'password-match';
+                passwordMatchMsg.innerHTML = '';
+                return false;
+            }
+            
+            if (password === confirmPassword) {
+                passwordMatchMsg.className = 'password-match match';
+                passwordMatchMsg.innerHTML = '✓ Passwords match';
+                confirmPasswordInput.classList.remove('error');
+                confirmPasswordInput.classList.add('success');
+                return true;
+            } else {
+                passwordMatchMsg.className = 'password-match not-match';
+                passwordMatchMsg.innerHTML = '✗ Passwords do not match';
+                confirmPasswordInput.classList.remove('success');
+                confirmPasswordInput.classList.add('error');
+                return false;
+            }
+        }
+        
+        // Real-time validation
+        passwordInput.addEventListener('input', () => {
+            validatePassword();
+            validatePasswordMatch();
+            
+            if (passwordInput.value.length >= 6) {
+                passwordInput.classList.add('success');
+                passwordInput.classList.remove('error');
+            } else if (passwordInput.value.length > 0) {
+                passwordInput.classList.add('error');
+                passwordInput.classList.remove('success');
+            } else {
+                passwordInput.classList.remove('success', 'error');
+            }
+        });
+        
+        confirmPasswordInput.addEventListener('input', () => {
+            validatePasswordMatch();
+        });
+        
+        // Email validation
+        document.getElementById('email').addEventListener('input', (e) => {
+            const email = e.target.value;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (emailRegex.test(email)) {
+                e.target.classList.add('success');
+                e.target.classList.remove('error');
+            } else if (email.length > 0) {
+                e.target.classList.add('error');
+                e.target.classList.remove('success');
+            } else {
+                e.target.classList.remove('success', 'error');
+            }
+        });
+        
+        // Phone validation (Kenyan format)
+        document.getElementById('phone').addEventListener('input', (e) => {
+            let phone = e.target.value;
+            const kenyanRegex = /^(07|01)\d{8}$/;
+            if (kenyanRegex.test(phone) || phone.length === 0) {
+                e.target.classList.add('success');
+                e.target.classList.remove('error');
+            } else if (phone.length > 0) {
+                e.target.classList.add('error');
+                e.target.classList.remove('success');
+            }
+        });
         
         // Registration handler
         form.addEventListener('submit', async (e) => {
@@ -207,24 +380,53 @@
             const fullName = document.getElementById('fullName').value.trim();
             const email = document.getElementById('email').value.trim();
             const phone = document.getElementById('phone').value.trim();
-            const password = document.getElementById('password').value;
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
             
-            // Validate
-            if (!fullName || !email || !password) {
-                showMessage('Please fill all required fields', 'error');
+            // Validate all fields
+            if (!fullName) {
+                showMessage('Please enter your full name', 'error');
+                document.getElementById('fullName').focus();
+                return;
+            }
+            
+            if (!email) {
+                showMessage('Please enter your email address', 'error');
+                document.getElementById('email').focus();
+                return;
+            }
+            
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showMessage('Please enter a valid email address', 'error');
+                document.getElementById('email').focus();
+                return;
+            }
+            
+            if (!password) {
+                showMessage('Please enter a password', 'error');
+                passwordInput.focus();
                 return;
             }
             
             if (password.length < 6) {
-                showMessage('Password must be at least 6 characters', 'error');
+                showMessage('Password must be at least 6 characters long', 'error');
+                passwordInput.focus();
                 return;
             }
             
-            // Disable button
+            if (password !== confirmPassword) {
+                showMessage('Passwords do not match', 'error');
+                confirmPasswordInput.focus();
+                return;
+            }
+            
+            // Disable button and show loading
             registerBtn.disabled = true;
             registerBtn.textContent = 'Creating Account...';
             
             console.log('Attempting to register:', email);
+            showMessage('Creating your account...', 'info');
             
             try {
                 // Sign up with Supabase
@@ -254,7 +456,14 @@
                     // Clear form
                     form.reset();
                     
-                    // Redirect to home after 3 seconds
+                    // Remove success classes
+                    document.querySelectorAll('input').forEach(input => {
+                        input.classList.remove('success', 'error');
+                    });
+                    passwordMatchMsg.className = 'password-match';
+                    passwordMatchMsg.innerHTML = '';
+                    
+                    // Redirect to login after 3 seconds
                     setTimeout(() => {
                         window.location.href = '/';
                     }, 3000);
@@ -272,17 +481,31 @@
             }
         });
         
-        // Add password validation feedback
-        document.getElementById('password').addEventListener('input', (e) => {
-            const password = e.target.value;
-            if (password.length > 0 && password.length < 6) {
-                e.target.style.borderColor = '#ff4444';
-            } else if (password.length >= 6) {
-                e.target.style.borderColor = '#00C851';
-            } else {
-                e.target.style.borderColor = 'rgba(255,255,255,0.2)';
+        // Add some CSS for the validation classes
+        const style = document.createElement('style');
+        style.textContent = `
+            input.success {
+                border-color: #00C851 !important;
             }
-        });
+            input.error {
+                border-color: #ff4444 !important;
+            }
+            .requirements li.valid {
+                color: #00C851;
+                list-style: none;
+            }
+            .requirements li.valid:before {
+                content: "✓ ";
+            }
+            .requirements li.invalid {
+                color: #ff4444;
+                list-style: none;
+            }
+            .requirements li.invalid:before {
+                content: "✗ ";
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
