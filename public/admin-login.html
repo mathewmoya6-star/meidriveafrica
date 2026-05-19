@@ -294,174 +294,131 @@ h1{
 </div>
 
 <script>
+// Supabase configuration
+const SUPABASE_URL = 'https://jeksrwrzzrczamxijvwl.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impla3Nyd3J6enJjemFteGlqdndsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NzYyMjAsImV4cCI6MjA5NDI1MjIyMH0.1poYpJKNFEVe2NTBkXBTH2bIHGk2yT8aqCU-OlJc4vs';
 
-const SUPABASE_URL =
-'https://jeksrwrzzrczamxijvwl.supabase.co';
+// Initialize Supabase client
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const SUPABASE_ANON_KEY =
-'PASTE_YOUR_REAL_SUPABASE_ANON_KEY_HERE';
+// DOM elements
+const form = document.getElementById('loginForm');
+const loginBtn = document.getElementById('loginBtn');
+const errorBox = document.getElementById('errorBox');
+const successBox = document.getElementById('successBox');
 
-const { createClient } = window.supabase;
-
-const supabase =
-createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
-);
-
-const form =
-document.getElementById('loginForm');
-
-const loginBtn =
-document.getElementById('loginBtn');
-
-const errorBox =
-document.getElementById('errorBox');
-
-const successBox =
-document.getElementById('successBox');
-
-function showError(message){
-
-    errorBox.style.display='block';
-    successBox.style.display='none';
-
-    errorBox.textContent=message;
+// Helper functions
+function showError(message) {
+    errorBox.style.display = 'block';
+    successBox.style.display = 'none';
+    errorBox.textContent = message;
 }
 
-function showSuccess(message){
-
-    successBox.style.display='block';
-    errorBox.style.display='none';
-
-    successBox.textContent=message;
+function showSuccess(message) {
+    successBox.style.display = 'block';
+    errorBox.style.display = 'none';
+    successBox.textContent = message;
 }
 
-function setLoading(state){
-
-    loginBtn.disabled=state;
-
+function setLoading(state) {
+    loginBtn.disabled = state;
     loginBtn.innerHTML = state
-    ? '<span class="loader"></span>Logging in...'
-    : 'Login as Admin';
+        ? '<span class="loader"></span>Logging in...'
+        : 'Login as Admin';
 }
 
-async function verifyAdmin(userId){
+// Verify if user is admin
+async function verifyAdmin(userId) {
+    try {
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', userId)
+            .single();
 
-    const { data, error } =
-    await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', userId)
-    .single();
+        if (error) {
+            console.error('Error verifying admin:', error);
+            return false;
+        }
 
-    if(error) return false;
-
-    return data?.role === 'admin';
-}
-
-async function checkExistingSession(){
-
-    const {
-        data:{ session }
-    } =
-    await supabase.auth.getSession();
-
-    if(!session) return;
-
-    const isAdmin =
-    await verifyAdmin(session.user.id);
-
-    if(isAdmin){
-
-        window.location.href =
-        '/admin-dashboard.html';
+        return data?.role === 'admin';
+    } catch (err) {
+        console.error('Verify admin error:', err);
+        return false;
     }
 }
 
-checkExistingSession();
+// Check if already logged in
+async function checkExistingSession() {
+    const { data: { session } } = await supabase.auth.getSession();
 
-form.addEventListener('submit', async(e)=>{
+    if (!session) return;
 
+    const isAdmin = await verifyAdmin(session.user.id);
+
+    if (isAdmin) {
+        window.location.href = '/admin-dashboard.html';
+    }
+}
+
+// Login function
+async function login(email, password) {
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password
+    });
+
+    return { data, error };
+}
+
+// Form submit handler
+form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const email =
-    document.getElementById('email')
-    .value
-    .trim();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
 
-    const password =
-    document.getElementById('password')
-    .value;
-
-    if(!email || !password){
-
-        return showError(
-            'Please enter email and password'
-        );
+    if (!email || !password) {
+        return showError('Please enter email and password');
     }
 
-    try{
+    setLoading(true);
+    showError('');
+    
+    try {
+        // Attempt login
+        const { data, error } = await login(email, password);
 
-        setLoading(true);
-
-        const { data, error } =
-        await supabase.auth.signInWithPassword({
-            email,
-            password
-        });
-
-        if(error){
-
+        if (error) {
             setLoading(false);
-
-            return showError(
-                error.message
-            );
+            return showError(error.message);
         }
 
-        const isAdmin =
-        await verifyAdmin(
-            data.user.id
-        );
+        // Verify admin role
+        const isAdmin = await verifyAdmin(data.user.id);
 
-        if(!isAdmin){
-
+        if (!isAdmin) {
             await supabase.auth.signOut();
-
             setLoading(false);
-
-            return showError(
-                'Access denied. Admin only.'
-            );
+            return showError('Access denied. Admin only.');
         }
 
-        showSuccess(
-            'Login successful. Redirecting...'
-        );
+        // Login successful
+        showSuccess('Login successful. Redirecting to admin dashboard...');
 
-        setTimeout(()=>{
+        setTimeout(() => {
+            window.location.href = '/admin-dashboard.html';
+        }, 1200);
 
-            window.location.href =
-            '/admin-dashboard.html';
-
-        },1200);
-
-    }catch(err){
-
-        console.error(err);
-
-        showError(
-            'Something went wrong'
-        );
-
-    }finally{
-
+    } catch (err) {
+        console.error('Login error:', err);
+        showError('Something went wrong. Please try again.');
         setLoading(false);
     }
-
 });
 
+// Check existing session on page load
+checkExistingSession();
 </script>
 
 </body>
